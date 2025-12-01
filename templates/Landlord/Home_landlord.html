@@ -6,210 +6,158 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" crossorigin="anonymous">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
   <title>Home</title>
-  <style>
-    :root{
-      --bg:#f4f7fb;
-      --card:#ffffff;
-      --muted:#6b7280;
-      --accent:#2563eb;
-      --accent-2:#06b6d4;
-      --danger:#ef4444;
-      --radius:12px;
-      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    }
 
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;background:var(--bg);color:#0f172a}
-
-    /* Layout */
-    .app{
-      display:flex;min-height:100vh;gap:24px;padding:24px;
-      align-items:flex-start;
-    }
-
-    /* SIDEBAR */
-    .sidebar-card{
-      width:260px;background:linear-gradient(180deg,#fff,#fbfdff);border-radius:var(--radius);
-      padding:18px;box-shadow:0 8px 20px rgba(11,15,30,0.06);display:flex;flex-direction:column;gap:14px;
-      flex-shrink:0;
-    }
-
-    .brand{display:flex;align-items:center;gap:10px;padding-bottom:6px;border-bottom:1px solid #edf2f7}
-    .logo{width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:grid;place-items:center;color:#fff;font-weight:700}
-    .brand h1{font-size:15px;margin:0}
-    .brand p{margin:0;font-size:12px;color:var(--muted)}
-
-    /* nav buttons that look like cards */
-    .nav-cards{display:flex;flex-direction:column;gap:8px;margin-top:6px}
-    .nav-card{background:var(--card);padding:10px;border-radius:10px;display:flex;align-items:center;gap:10px;cursor:pointer;border:1px solid transparent}
-    .nav-card:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(16,24,40,0.06);border-color:#eef2ff}
-    .nav-card.active{background:linear-gradient(90deg,rgba(37,99,235,0.08),rgba(6,182,212,0.04));border-color:rgba(37,99,235,0.12)}
-    .nav-card svg{width:18px;height:18px;flex-shrink:0}
-    .nav-card span{font-size:14px}
-
-    .divider{height:1px;background:#f1f5f9;border-radius:999px;margin:6px 0}
-
-    .below{margin-top:auto}
-    .notification{background:linear-gradient(180deg,#fffbeb,#fff);padding:10px;border-radius:10px;border:1px solid #fff7cc;font-size:13px}
-    .logout{display:block;margin-top:8px;padding:10px;border-radius:10px;text-align:center;background:#fff;border:1px solid #eee;color:var(--danger);cursor:pointer}
-
-    /* MAIN CONTENT */
-    .main{flex:1}
-    .content-card{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:0 8px 20px rgba(11,15,30,0.04)}
-
-    .top-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
-    .search{display:flex;gap:8px;align-items:center}
-    .search input{padding:8px 12px;border-radius:10px;border:1px solid #e6eefb;min-width:220px}
-
-    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:8px}
-    .stat{background:linear-gradient(180deg,#fff,#fbfdff);padding:14px;border-radius:10px;border:1px solid #eef2ff}
-    .stat h3{margin:0;font-size:13px;color:var(--muted)}
-    .stat p{margin:8px 0 0;font-size:20px;font-weight:700}
-    .stat .meta{font-size:12px;color:var(--muted);margin-top:6px}
-
-    .lower{display:flex;gap:14px;margin-top:18px}
-    .panel{flex:1;background:var(--card);padding:14px;border-radius:10px;border:1px solid #eef2ff}
-    .panel h4{margin:0 0 8px 0}
-    .recent-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
-    .recent-list li{display:flex;justify-content:space-between;gap:8px;padding:8px;border-radius:8px;background:#fbfdff}
-
-    /* small screens */
-    @media (max-width:900px){
-      .app{padding:14px}
-      .sidebar-card{width:220px}
-      .stats-grid{grid-template-columns:repeat(2,1fr)}
-      .top-row{flex-direction:column;align-items:flex-start}
-    }
-
-    @media (max-width:600px){
-      .app{flex-direction:column}
-      .sidebar-card{width:100%;order:2}
-      .main{order:1}
-      .stats-grid{grid-template-columns:repeat(1,1fr)}
-      .below{display:flex;gap:8px}
-    }
-  </style>
 </head>
-<body>
-  <div class="app">
+<body class="bg-light">
+  <div class="d-flex min-vh-100">
     <!-- SIDEBAR -->
-    <aside class="sidebar-card" aria-label="Sidebar navigation">
-      <div class="brand">
-        <div class="logo">RD</div>
+    <aside class="bg-white border-end p-3 overflow-auto" style="width: 260px; flex-shrink: 0; box-shadow: 0 2px 4px rgba(0,0,0,0.06);">
+      
+      <div class="d-flex align-items-center gap-2 pb-2 border-bottom mb-3">
+        <div class="rounded" style="width: 40px; height: 40px; background: linear-gradient(135deg, #2563eb, #06b6d4); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 14px;">RD</div>
         <div>
-          <h1>Ronalyn Dashboard</h1>
-          <p>Property Manager</p>
+          <h6 class="mb-0 fs-6">Ronalyn Dashboard</h6>
+          <small class="text-muted">Property Manager</small>
         </div>
       </div>
 
-      <nav class="nav-cards" role="navigation">
-        <div class="nav-card active" data-section="dashboard" tabindex="0">
-          <!-- dashboard icon -->
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="8" height="8" rx="2"></rect><rect x="13" y="3" width="8" height="5" rx="2"></rect><rect x="13" y="12" width="8" height="9" rx="2"></rect><rect x="3" y="13" width="8" height="8" rx="2"></rect></svg>
-          <span>Dashboard</span>
+      <!-- Nav Cards -->
+      <nav class="d-flex flex-column gap-2">
+        <div class="nav-item p-2 rounded border cursor-pointer active" data-section="dashboard" style="cursor: pointer; display: flex; align-items: center; gap: 10px; border: 1px solid transparent; background-color: rgba(37,99,235,0.08); border-color: rgba(37,99,235,0.12);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width: 18px; height: 18px;"><rect x="3" y="3" width="8" height="8" rx="2"></rect><rect x="13" y="3" width="8" height="5" rx="2"></rect><rect x="13" y="12" width="8" height="9" rx="2"></rect><rect x="3" y="13" width="8" height="8" rx="2"></rect></svg>
+          <span class="small">Dashboard</span>
         </div>
 
-        <div class="nav-card" data-section="rooms" tabindex="0">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 7h18"/><path d="M6 21V7"/><path d="M18 21V7"/></svg>
-          <span>Rooms</span>
+        <div class="nav-item p-2 rounded border cursor-pointer" data-section="rooms" style="cursor: pointer; display: flex; align-items: center; gap: 10px; border: 1px solid transparent; transition: all 0.2s;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width: 18px; height: 18px;"><path d="M3 7h18"/><path d="M6 21V7"/><path d="M18 21V7"/></svg>
+          <span class="small">Rooms</span>
         </div>
 
-        <div class="nav-card" data-section="payments" tabindex="0">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="20" height="14" rx="2"></rect><path d="M2 10h20"/></svg>
-          <span>Payment Tracker</span>
+        <div class="nav-item p-2 rounded border cursor-pointer" data-section="payments" style="cursor: pointer; display: flex; align-items: center; gap: 10px; border: 1px solid transparent; transition: all 0.2s;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width: 18px; height: 18px;"><rect x="2" y="5" width="20" height="14" rx="2"></rect><path d="M2 10h20"/></svg>
+          <span class="small">Payment Tracker</span>
         </div>
 
-        <div class="nav-card" data-section="tenants" tabindex="0">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="3"></circle><path d="M5.5 20a6.5 6.5 0 0 1 13 0"></path></svg>
-          <span>Tenants</span>
+        <div class="nav-item p-2 rounded border cursor-pointer" data-section="tenants" style="cursor: pointer; display: flex; align-items: center; gap: 10px; border: 1px solid transparent; transition: all 0.2s;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width: 18px; height: 18px;"><circle cx="12" cy="8" r="3"></circle><path d="M5.5 20a6.5 6.5 0 0 1 13 0"></path></svg>
+          <span class="small">Tenants</span>
         </div>
 
-        <div class="nav-card" data-section="reminders" tabindex="0">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 8v5l3 3"/><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg>
-          <span>Reminders</span>
+        <div class="nav-item p-2 rounded border cursor-pointer" data-section="reminders" style="cursor: pointer; display: flex; align-items: center; gap: 10px; border: 1px solid transparent; transition: all 0.2s;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width: 18px; height: 18px;"><path d="M12 8v5l3 3"/><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"/></svg>
+          <span class="small">Reminders</span>
         </div>
       </nav>
 
-      <div class="divider"></div>
+      <hr class="my-3">
 
-      <div class="below">
-        <div class="notification" role="status">
+      <!-- Below Section -->
+      <div class="mt-auto">
+        <div class="alert alert-warning alert-sm p-2 mb-2" style="font-size: 12px;">
           <strong>2 new</strong> overdue payments — check Payments.
         </div>
-        <button class="logout" aria-label="Log out">Log out</button>
+        <button class="btn btn-outline-danger btn-sm w-100" aria-label="Log out">Log out</button>
       </div>
+
     </aside>
 
-    <!-- MAIN -->
-    <main class="main">
-      <div class="content-card">
-        <div class="top-row">
+    <!-- MAIN CONTENT -->
+    <main class="flex-grow-1 p-4">
+      <div class="bg-white rounded p-3 shadow-sm">
+        
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
           <div>
-            <h2 style="margin:0 0 6px 0">Dashboard</h2>
-            <p style="margin:0;color:var(--muted)">Overview of rooms, occupancy and payments</p>
+            <h2 class="mb-1">Dashboard</h2>
+            <p class="text-muted small mb-0">Overview of rooms, occupancy and payments</p>
           </div>
 
-          <div class="search">
-            <input placeholder="Search tenants, rooms or payments..." aria-label="Search" />
-            <button style="padding:8px 12px;border-radius:8px;border:1px solid #e6eefb;background:var(--accent);color:white;cursor:pointer">+ New</button>
-          </div>
-        </div>
-
-        <div class="stats-grid" aria-live="polite">
-          <div class="stat">
-            <h3>Total Rooms</h3>
-            <p id="totalRooms">48</p>
-            <div class="meta">Includes occupied & available</div>
-          </div>
-
-          <div class="stat">
-            <h3>Occupied</h3>
-            <p id="occupied">36</p>
-            <div class="meta">Current tenants</div>
-          </div>
-
-          <div class="stat">
-            <h3>Available</h3>
-            <p id="available">12</p>
-            <div class="meta">Ready for move-in</div>
-          </div>
-
-          <div class="stat">
-            <h3>Overdue Payments</h3>
-            <p id="overdue">2</p>
-            <div class="meta">Unpaid > 7 days</div>
+          <div class="d-flex gap-2 align-items-center flex-wrap">
+            <input type="text" class="form-control form-control-sm" placeholder="Search tenants, rooms or payments..." aria-label="Search" style="min-width: 200px;">
+            <button class="btn btn-primary btn-sm">+ New</button>
           </div>
         </div>
 
-        <div class="lower">
-          <section class="panel">
-            <h4>Recent Activity</h4>
-            <ul class="recent-list">
-              <li><div>Tenant: Maria Lopez — Rent paid (Room 203)</div><div style="color:var(--muted);font-size:12px">Today</div></li>
-              <li><div>Room 110 — Maintenance scheduled</div><div style="color:var(--muted);font-size:12px">Yesterday</div></li>
-              <li><div>Tenant: John Doe — Overdue notice sent</div><div style="color:var(--muted);font-size:12px">2 days ago</div></li>
-            </ul>
-          </section>
-
-          <section class="panel">
-            <h4>Quick Actions</h4>
-            <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
-              <button style="padding:10px;border-radius:8px;border:1px solid #e6eefb;background:#fff;cursor:pointer">Add Room</button>
-              <button style="padding:10px;border-radius:8px;border:1px solid #e6eefb;background:#fff;cursor:pointer">Create Invoice</button>
-              <button style="padding:10px;border-radius:8px;border:1px solid #e6eefb;background:#fff;cursor:pointer">Send Reminder</button>
+        <!-- Stats Grid -->
+        <div class="row g-3 mb-4">
+          <div class="col-lg-3 col-md-6">
+            <div class="card border-light p-3" style="background: linear-gradient(180deg,#fff,#fbfdff);">
+              <h6 class="text-muted mb-1 small">Total Rooms</h6>
+              <p class="fs-4 fw-bold mb-1" id="totalRooms">48</p>
+              <small class="text-muted">Includes occupied & available</small>
             </div>
-          </section>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="card border-light p-3" style="background: linear-gradient(180deg,#fff,#fbfdff);">
+              <h6 class="text-muted mb-1 small">Occupied</h6>
+              <p class="fs-4 fw-bold mb-1" id="occupied">36</p>
+              <small class="text-muted">Current tenants</small>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="card border-light p-3" style="background: linear-gradient(180deg,#fff,#fbfdff);">
+              <h6 class="text-muted mb-1 small">Available</h6>
+              <p class="fs-4 fw-bold mb-1" id="available">12</p>
+              <small class="text-muted">Ready for move-in</small>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="card border-light p-3" style="background: linear-gradient(180deg,#fff,#fbfdff);">
+              <h6 class="text-muted mb-1 small">Overdue Payments</h6>
+              <p class="fs-4 fw-bold mb-1" id="overdue">2</p>
+              <small class="text-muted">Unpaid > 7 days</small>
+            </div>
+          </div>
         </div>
+
+        <!-- Panels Section -->
+        <div class="row g-3">
+          <div class="col-lg-6">
+            <div class="card border-light p-3" style="background: #fff; border: 1px solid #eef2ff;">
+              <h5 class="mb-3">Recent Activity</h5>
+              <ul class="list-unstyled">
+                <li class="d-flex justify-content-between gap-2 p-2 rounded mb-2" style="background: #fbfdff;">
+                  <div>Tenant: Maria Lopez — Rent paid (Room 203)</div>
+                  <small class="text-muted">Today</small>
+                </li>
+                <li class="d-flex justify-content-between gap-2 p-2 rounded mb-2" style="background: #fbfdff;">
+                  <div>Room 110 — Maintenance scheduled</div>
+                  <small class="text-muted">Yesterday</small>
+                </li>
+                <li class="d-flex justify-content-between gap-2 p-2 rounded mb-2" style="background: #fbfdff;">
+                  <div>Tenant: John Doe — Overdue notice sent</div>
+                  <small class="text-muted">2 days ago</small>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <div class="card border-light p-3" style="background: #fff; border: 1px solid #eef2ff;">
+              <h5 class="mb-3">Quick Actions</h5>
+              <div class="d-flex flex-column gap-2">
+                <button class="btn btn-outline-secondary btn-sm">Add Room</button>
+                <button class="btn btn-outline-secondary btn-sm">Create Invoice</button>
+                <button class="btn btn-outline-secondary btn-sm">Send Reminder</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </main>
   </div>
 
   <script>
     // small JS to switch "active" nav and simulate content updates
-    document.querySelectorAll('.nav-card').forEach(node => {
+    document.querySelectorAll('.nav-item').forEach(node => {
       node.addEventListener('click', () => {
-        document.querySelectorAll('.nav-card').forEach(n=>n.classList.remove('active'));
-        node.classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(n=>n.style.background='transparent');
+        document.querySelectorAll('.nav-item').forEach(n=>n.style.borderColor='transparent');
+        node.style.background='rgba(37,99,235,0.08)';
+        node.style.borderColor='rgba(37,99,235,0.12)';
         const section = node.dataset.section;
         // if you want to hook into real app routing, replace with actual functions
         console.log('Navigate to', section);

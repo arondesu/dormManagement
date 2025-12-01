@@ -6,165 +6,61 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
     <style>
-        /* Body styling */
         body {
             background-image: url("{{ url_for('static', filename='images/logIn.jpg') }}");
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            font-family: Arial, sans-serif;
-            font-size: 15px;
-            margin: 0;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* Form container */
-        .form-container {
-            background-color: rgba(255, 255, 255, 0.88);
-            padding: 25px;
-            border-radius: 12px;
-            width: 500px; /* wider for landscape layout */
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-        }
-
-        /* Heading */
-        h2 {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #343a40;
-        }
-
-        /* Input groups */
-        .input-group {
-            margin-bottom: 18px;
-            text-align: left;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: normal;
-        }
-
-        .input-group input,
-        .input-group select {
-            width: 100%;
-            padding: 12px;
-            margin-top: 3px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 15px;
-            background-color: #fff;
-            box-sizing: border-box;
-        }
-
-        /* Row group for side-by-side inputs */
-        .row-group {
-            display: flex;
-            gap: 15px;
-        }
-
-        .row-group .input-group {
-            flex: 1;
-        }
-
-        /* Button container */
-        .btn-container {
-            text-align: center;
-            margin: 25px auto 15px;
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 10px;
-            font-size: 15px;
-        }
-
-        /* Login link text */
-        .login-text {
-            text-align: center;
-            margin-top: 10px;
-            font-size: 14px;
-        }
-
-        .login-text a {
-            text-decoration: none;
-            color: #007bff;
-        }
-
-        .login-text a:hover {
-            text-decoration: underline;
         }
     </style>
 </head>
-<body>
-
-    <div class="form-container">
-        <!-- Form Heading -->
-        <h2>Sign Up</h2>
-
-        <!-- Sign Up Form -->
+<body class="d-flex justify-content-center align-items-center">
+    <div class="card p-4 shadow" style="width: 100%; max-width: 500px; background-color: rgba(255,255,255,0.95);">
+        <h2 class="text-center mb-4 h4">Sign Up</h2>
         <form method="POST" action="/register">
-
-            <!-- First Name & Last Name -->
-            <div class="row-group">
-                <div class="input-group">
-                    <label for="firstname">First Name</label>
-                    <input type="text" id="firstname" name="first_name" placeholder="First Name" required>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="firstname" class="form-label">First Name</label>
+                    <input type="text" id="firstname" name="first_name" class="form-control" placeholder="First Name" required>
                 </div>
-                <div class="input-group">
-                    <label for="lastname">Last Name</label>
-                    <input type="text" id="lastname" name="last_name" placeholder="Last Name" required>
+                <div class="col-md-6">
+                    <label for="lastname" class="form-label">Last Name</label>
+                    <input type="text" id="lastname" name="last_name" class="form-control" placeholder="Last Name" required>
                 </div>
             </div>
-
-            <!-- Contact Number & Address side by side -->
-            <div class="row-group">
-                <div class="input-group">
-                    <label for="contact">Contact Number</label>
-                    <input type="text" id="contact" name="contact" placeholder="Contact Number" required>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="contact" class="form-label">Contact Number</label>
+                    <input type="text" id="contact" name="contact" class="form-control" placeholder="Contact Number" required>
                 </div>
-                <div class="input-group">
-                    <label for="address">Address</label>
-                    <input type="text" id="address" name="address" placeholder="Enter Address" required>
+                <div class="col-md-6">
+                    <label for="address" class="form-label">Address</label>
+                    <input type="text" id="address" name="address" class="form-control" placeholder="Enter Address" required>
                 </div>
             </div>
-
-            <!-- Password -->
-            <div class="input-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter Password" required>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="Enter Password" required>
             </div>
-
-            <!-- Role & User ID -->
-            <div class="row-group">
-                <div class="input-group">
-                    <label for="role">Role</label>
-                    <select id="role" name="role" required>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="role" class="form-label">Role</label>
+                    <select id="role" name="role" class="form-select" required>
                         <option value="" disabled selected>Choose</option>
                         <option value="tenant">Tenant</option>
                         <option value="landlord">Landlord</option>
                     </select>
                 </div>
-                <div class="input-group">
-                    <label for="userid">ID</label>
-                    <input type="text" id="userid" name="user_id" placeholder="Enter ID" required>
+                <div class="col-md-6">
+                    <label for="userid" class="form-label">ID</label>
+                    <input type="text" id="userid" name="user_id" class="form-control" placeholder="Enter ID" required>
                 </div>
             </div>
-
-            <!-- Submit Button -->
-            <div class="btn-container">
-                <button type="submit" class="btn btn-primary">Sign Up</button>
-            </div>
-
-            <!-- Login Link -->
-            <p class="login-text">
-                Already have an account? <a href="/login">Login here</a>
+            <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+            <p class="text-center mt-3 small">
+                Already have an account? <a href="/login" class="text-decoration-none">Login here</a>
             </p>
-
         </form>
     </div>
 

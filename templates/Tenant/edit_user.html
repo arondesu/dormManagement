@@ -4,219 +4,63 @@
     <title>Edit Profile</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
-    <style>
-        /* Background image behind the form */
-        body {
-            background-image: url("{{ url_for('static', filename='images/editProf.jpg') }}"); /* change this to your actual file */
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
 
-            background-color: #d8e4ed; /* fallback color */
-            font-family: Arial, sans-serif;
-            font-size: 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-        }
-
-        .edit-form {
-            max-width: 800px;
-            display: flex;
-            padding: 25px;
-            border-radius: 12px;
-            background-color: rgba(255, 255, 255, 0.92); /* form background */
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.20);
-        }
-
-        /* Left column: profile picture and back button */
-        .profile-column {
-            flex: 1;
-            text-align: center;
-            margin-right: 30px;
-            position: relative;
-        }
-
-        .back-btn {
-            position: absolute;
-            top: 0;
-            left: 0;
-            text-decoration: none;
-            color: #007bff;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        .back-btn:hover {
-            color: #0056b3;
-        }
-
-        .profile-pic {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background-color: #ddd;
-            background-size: cover;
-            background-position: center;
-            border: 3px solid #aaa;
-            margin: 40px auto 15px;
-        }
-
-        .upload-btn {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 14px;
-            display: inline-block;
-            margin: 10px auto 20px;
-        }
-
-        .upload-btn:hover {
-            background-color: #0056b3;
-        }
-
-        #fileUpload {
-            display: none;
-        }
-
-        /* Right column: form fields */
-        .form-column {
-            flex: 2;
-        }
-
-        h2 {
-            margin-bottom: 20px;
-            color: #343a40;
-        }
-
-        .input-group {
-            width: 100%;
-            margin-bottom: 15px;
-            text-align: left;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: normal;
-        }
-
-        .input-group input[type=text],
-        .input-group select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-
-        .name-row {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 15px;
-        }
-
-        .name-row .input-group {
-            flex: 1;
-            margin-bottom: 0;
-        }
-
-        .btn-container {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 10px;
-        }
-
-        .btn-container .btn {
-            padding: 5px 10px;
-            font-size: 14px;
-            text-decoration: none;
-        }
-
-        .btn-success {
-            background-color: #28a745;
-            color: white;
-            border: none;
-            border-radius: 4px;
-        }
-
-        .btn-success:hover {
-            background-color: #218838;
-            color: white;
-        }
-
-        .btn-secondary {
-            background-color: #6c757d;
-            color: white;
-            border: none;
-            border-radius: 4px;
-        }
-
-        .btn-secondary:hover {
-            background-color: #5a6268;
-            color: white;
-        }
-    </style>
 </head>
 
-<body>
-    <div class="edit-form">
+<body class="d-flex justify-content-center align-items-center" style="background-image: url('{{ url_for('static', filename='images/editProf.jpg') }}'); background-size: cover; background-position: center; background-repeat: no-repeat; background-color: #d8e4ed; min-height: 100vh; margin: 0;">
+    <div class="card p-4 shadow" style="max-width: 800px; width: 100%; background-color: rgba(255, 255, 255, 0.92);">
+        <div class="row g-4">
+            
+            <!-- Left Column: Profile Picture -->
+            <div class="col-md-4 text-center position-relative">
+                <a href="/users" class="position-absolute top-0 start-0 link-primary small" style="text-decoration: none; font-weight: bold;">← Back</a>
 
-        <!-- Left Column: Profile -->
-        <div class="profile-column">
-            <a href="/users" class="back-btn">← Back</a>
+                <div 
+                  class="rounded-circle mx-auto" 
+                  id="profilePicPreview"
+                  style="width: 120px; height: 120px; background-color: #ddd; background-size: cover; background-position: center; border: 3px solid #aaa; margin-top: 30px; background-image: url('https://via.placeholder.com/120?text=Profile');"
+                  title="Profile Picture Preview"
+                ></div>
 
-            <div 
-              class="profile-pic" 
-              id="profilePicPreview"
-              style="background-image: url('https://via.placeholder.com/120?text=Profile');"
-              title="Profile Picture Preview"
-            ></div>
+                <label for="fileUpload" class="btn btn-primary mt-3 mb-3">Upload Photo</label>
+                <input type="file" id="fileUpload" class="d-none" accept="image/*" />
+            </div>
 
-            <label for="fileUpload" class="upload-btn">Upload Photo</label>
-            <input type="file" id="fileUpload" accept="image/*" />
-        </div>
+            <!-- Right Column: Form Fields -->
+            <div class="col-md-8">
+                <h2 class="mb-4">Edit Profile</h2>
+                <form method="POST" enctype="multipart/form-data">
 
-        <!-- Right Column: Form -->
-        <div class="form-column">
-            <h2>Edit Profile</h2>
-            <form method="POST" enctype="multipart/form-data">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">First Name</label>
+                            <input type="text" name="first_name" placeholder="First Name" class="form-control" required>
+                        </div>
 
-                <div class="name-row">
-                    <div class="input-group">
-                        <label>First Name</label>
-                        <input type="text" name="first_name" placeholder="First Name" class="form-control" required>
+                        <div class="col-md-6">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" name="last_name" placeholder="Last Name" class="form-control" required>
+                        </div>
                     </div>
 
-                    <div class="input-group">
-                        <label>Last Name</label>
-                        <input type="text" name="last_name" placeholder="Last Name" class="form-control" required>
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <input type="text" name="address" placeholder="Enter Address" class="form-control" required>
                     </div>
-                </div>
 
-                <div class="input-group">
-                    <label>Address</label>
-                    <input type="text" name="address" placeholder="Enter Address" class="form-control" required>
-                </div>
+                    <div class="mb-3">
+                        <label class="form-label">Contact Number</label>
+                        <input type="text" name="contact" placeholder="Contact Number" class="form-control" required>
+                    </div>
 
-                <div class="input-group">
-                    <label>Contact Number</label>
-                    <input type="text" name="contact" placeholder="Contact Number" class="form-control" required>
-                </div>
+                    <div class="d-flex gap-2 justify-content-center mt-4">
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                        <a href="/users" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
 
-                <div class="btn-container">
-                    <button type="submit" class="btn btn-success">Save Changes</button>
-                    <a href="/users" class="btn btn-secondary">Cancel</a>
-                </div>
-            </form>
         </div>
-
     </div>
 
     <script>
