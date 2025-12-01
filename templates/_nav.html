@@ -5,15 +5,32 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('users') }}">Users</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('buildings') }}">Buildings</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('room_types') }}">Room Types</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('rooms') }}">Rooms</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('assignments') }}">Assignments</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('payments') }}">Payments</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('reports') }}">Reports</a></li>
-      </ul>
+        <ul class="navbar-nav ms-auto">
+        {% if session.get('user_id') %}
+          {% if session.get('role') == 'admin' %}
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('users') }}">Users</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('buildings') }}">Buildings</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('room_types') }}">Room Types</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('rooms') }}">Rooms</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('assignments') }}">Assignments</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('payments') }}">Payments</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('reports') }}">Reports</a></li>
+          {% elif session.get('role') == 'landlord' %}
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('rooms') }}">Rooms</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('assignments') }}">Assignments</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('payments') }}">Payments</a></li>
+          {% else %}
+            {# student or other roles #}
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('assignments') }}">My Assignment</a></li>
+            <li class="nav-item"><a class="nav-link" href="{{ url_for('payments') }}">Payments</a></li>
+          {% endif %}
+          <li class="nav-item"><a class="nav-link" href="#">{{ session.get('username') }}</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
+        {% else %}
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Login</a></li>
+          <li class="nav-item"><a class="nav-link" href="{{ url_for('register') }}">Register</a></li>
+        {% endif %}
+        </ul>
     </div>
   </div>
 </nav>

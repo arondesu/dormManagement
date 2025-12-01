@@ -1,7 +1,11 @@
-from flask import Flask, render_template, request, redirect, flash, url_for
+from flask import Flask, render_template, request, redirect, flash, url_for, session
 from db import get_db_connection
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
 from dotenv import load_dotenv
+import re
+import smtplib
+from email.message import EmailMessage
 
 # Load environment variables
 load_dotenv()
@@ -14,7 +18,10 @@ app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev_secret_key")
 # -----------------------
 @app.route("/")
 def home():
-    return render_template("01_index.html")
+    # If user is logged in show dashboard, otherwise show login first
+    if session.get('user_id'):
+        return render_template("01_index.html")
+    return redirect(url_for('login'))
 
 # ===========================
 # 1. USERS MANAGEMENT
@@ -44,30 +51,89 @@ def users():
 def add_user():
     if request.method == "POST":
         username = request.form.get("username")
+        password = request.form.get("password")
         first_name = request.form.get("first_name")
         last_name = request.form.get("last_name")
         email = request.form.get("email")
         phone = request.form.get("phone")
         role = request.form.get("role", "student")
         birth_date = request.form.get("birth_date")
+        # Basic validation
+        if not username or not email or not password:
+            flash("Username, email and password are required.", "danger")
+            return redirect(request.path)
+
+        # email format
+        email_regex = r"^[^@\s]+@[^@\s]+\.[^@\s]+$"
+        if not re.match(email_regex, email):
+            flash("Invalid email format.", "danger")
+            return redirect(request.path)
+
+        # password strength: min 8 chars, at least one letter and one digit
+        if len(password) < 8 or not re.search(r"[A-Za-z]", password) or not re.search(r"\d", password):
+            flash("Password must be at least 8 characters long and include letters and numbers.", "danger")
+            return redirect(request.path)
+
+        # Hash the password before storing
+        password_hash = generate_password_hash(password)
 
         conn = get_db_connection()
         cursor = conn.cursor()
         try:
+            # Basic uniqueness checks
+            cursor.execute("SELECT COUNT(*) FROM users WHERE username=%s", (username,))
+            if cursor.fetchone()[0] > 0:
+                flash("Username already taken.", "danger")
+                return redirect(request.path)
+            cursor.execute("SELECT COUNT(*) FROM users WHERE email=%s", (email,))
+            if cursor.fetchone()[0] > 0:
+                flash("Email already registered.", "danger")
+                return redirect(request.path)
+                return redirect(request.path)
             cursor.execute("""
                 INSERT INTO users 
                 (username, password_hash, role, first_name, last_name, email, phone, birth_date, is_active)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 1)
-            """, (username, "hashedpass", role, first_name, last_name, email, phone, birth_date))
+            """, (username, password_hash, role, first_name, last_name, email, phone, birth_date))
             conn.commit()
             flash("User added successfully!", "success")
-            return redirect(url_for("users"))
+            # try to send confirmation email (if configured)
+            try:
+                send_confirmation_email(email, username)
+                flash("Confirmation email sent.", "info")
+            except Exception:
+                flash("Confirmation email not sent (SMTP not configured).", "warning")
+            # If an admin (logged-in) created the user, go to users list; otherwise go to login
+            if session.get('user_id'):
+                return redirect(url_for("users"))
+            return redirect(url_for("login"))
         except Exception as e:
             flash(f"Error adding user: {e}", "danger")
         finally:
             cursor.close()
             conn.close()
-    return render_template("02_add_user.html")
+    return render_template("register.html")
+
+
+def send_confirmation_email(to_email, username):
+    # Reads SMTP settings from environment and sends a simple confirmation email.
+    smtp_host = os.getenv('SMTP_HOST')
+    smtp_port = int(os.getenv('SMTP_PORT', '587')) if os.getenv('SMTP_PORT') else None
+    smtp_user = os.getenv('SMTP_USER')
+    smtp_pass = os.getenv('SMTP_PASS')
+    if not smtp_host or not smtp_port or not smtp_user or not smtp_pass:
+        raise RuntimeError('SMTP not configured')
+
+    msg = EmailMessage()
+    msg['Subject'] = 'Welcome to Dorm Management'
+    msg['From'] = smtp_user
+    msg['To'] = to_email
+    msg.set_content(f'Hi {username},\n\nThank you for registering.\n\nRegards,\nDorm Management')
+
+    with smtplib.SMTP(smtp_host, smtp_port) as s:
+        s.starttls()
+        s.login(smtp_user, smtp_pass)
+        s.send_message(msg)
 
 @app.route("/edit_user/<int:user_id>", methods=["GET", "POST"])
 def edit_user(user_id):
@@ -135,6 +201,54 @@ def delete_user(user_id):
         cursor.close()
         conn.close()
     return redirect(url_for("users"))
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        identifier = (request.form.get('username') or '').strip()
+        password = request.form.get('password') or ''
+
+        # Require both fields before attempting DB lookup
+        if not identifier or not password:
+            flash('Please enter username and password.', 'warning')
+            return render_template('logIn.html')
+
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor.execute("SELECT user_id, username, password_hash, role, is_active FROM users WHERE (username=%s OR email=%s) LIMIT 1", (identifier, identifier))
+            user = cursor.fetchone()
+            if not user:
+                flash('Invalid username or password', 'danger')
+            elif not user.get('is_active', 1):
+                flash('Account is deactivated. Contact admin.', 'danger')
+            elif not user.get('password_hash') or not check_password_hash(user['password_hash'], password):
+                flash('Invalid username or password', 'danger')
+            else:
+                session['user_id'] = user['user_id']
+                session['username'] = user['username']
+                session['role'] = user.get('role')
+                flash('Logged in successfully!', 'success')
+                return redirect(url_for('home'))
+        except Exception as e:
+            flash(f'Error during login: {e}', 'danger')
+        finally:
+            cursor.close()
+            conn.close()
+    return render_template('logIn.html')
+
+
+@app.route('/register', methods=['GET'])
+def register():
+    return render_template('register.html')
+
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('Logged out successfully.', 'success')
+    return redirect(url_for('login'))
 
 # ===========================
 # 2. BUILDINGS MANAGEMENT
@@ -388,4 +502,6 @@ def reports():
 # RUN APP
 # -----------------------
 if __name__ == "__main__":
-    app.run(debug=True)
+    print("Starting Flask app on 0.0.0.0:5000")
+    # Disable the auto-reloader to keep the server in a single process for debugging here
+    app.run(debug=True, host="0.0.0.0", port=5000, use_reloader=False)
