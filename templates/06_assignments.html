@@ -39,13 +39,9 @@
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
-                    </thead>
-                    <tbody>
-                    {% if assignments %}
-                        {% for assign in assignments %}
-                            <tr>
-                                <td><strong>{{ assign.assignment_id }}</strong></td>
-                                <td>{{ assign.first_name }} {{ assign.last_name }}</td>
+                    <head>
+                        {% include '_head.html' %}
+                    </head>
                                 <td>{{ assign.room_number }}</td>
                                 <td>{{ assign.building_name or '-' }}</td>
                                 <td>{{ assign.start_date }}</td>
