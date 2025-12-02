@@ -172,15 +172,10 @@ dormManagement-1/
 
 ---
 
-## 🔑 Default Login Credentials
-
-| Role     | Username  | Password     |
-|----------|-----------|--------------|
-| Admin    | admin     | admin123     |
-| Landlord | landlord1 | landlord123  |
-| Student  | student1  | student123   |
-| Student  | student2  | student123   |
-| Student  | student3  | student123   |
+Default Login Credentials:
+  Admin:    username=admin     password=admin123
+  Landlord: username=landlord1 password=landlord123
+  Student:  username=student1  password=student123
 
 ---
 
