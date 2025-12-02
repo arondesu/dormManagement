@@ -34,7 +34,7 @@ def home():
 @app.route("/users")
 def users():
     conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
     users = []
     try:
         cursor.execute("""
@@ -85,11 +85,11 @@ def add_user():
         cursor = conn.cursor()
         try:
             # Basic uniqueness checks
-            cursor.execute("SELECT COUNT(*) FROM users WHERE username=%s", (username,))
+            cursor.execute("SELECT COUNT(*) FROM users WHERE username=?", (username,))
             if cursor.fetchone()[0] > 0:
                 flash("Username already taken.", "danger")
                 return redirect(request.path)
-            cursor.execute("SELECT COUNT(*) FROM users WHERE email=%s", (email,))
+            cursor.execute("SELECT COUNT(*) FROM users WHERE email=?", (email,))
             if cursor.fetchone()[0] > 0:
                 flash("Email already registered.", "danger")
                 return redirect(request.path)
@@ -97,7 +97,7 @@ def add_user():
             cursor.execute("""
                 INSERT INTO users 
                 (username, password_hash, role, first_name, last_name, email, phone, birth_date, is_active)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 1)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)
             """, (username, password_hash, role, first_name, last_name, email, phone, birth_date))
             conn.commit()
             flash("User added successfully!", "success")
@@ -160,11 +160,11 @@ def admin_add_user():
         conn = get_db_connection()
         cursor = conn.cursor()
         try:
-            cursor.execute("SELECT COUNT(*) FROM users WHERE username=%s", (username,))
+            cursor.execute("SELECT COUNT(*) FROM users WHERE username=?", (username,))
             if cursor.fetchone()[0] > 0:
                 flash('Username already taken.', 'danger')
                 return redirect(url_for('admin_add_user'))
-            cursor.execute("SELECT COUNT(*) FROM users WHERE email=%s", (email,))
+            cursor.execute("SELECT COUNT(*) FROM users WHERE email=?", (email,))
             if cursor.fetchone()[0] > 0:
                 flash('Email already registered.', 'danger')
                 return redirect(url_for('admin_add_user'))
@@ -173,7 +173,7 @@ def admin_add_user():
             cursor.execute("""
                 INSERT INTO users 
                 (username, password_hash, role, first_name, last_name, email, phone, birth_date, is_active)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 1)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)
             """, (username, password_hash, role, first_name, last_name, email, phone, birth_date))
             conn.commit()
             flash('User added successfully!', 'success')
@@ -224,7 +224,7 @@ def role_required(*allowed_roles):
 @app.route("/edit_user/<int:user_id>", methods=["GET", "POST"])
 def edit_user(user_id):
     conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
     user = None
     try:
         if request.method == "POST":
@@ -236,8 +236,8 @@ def edit_user(user_id):
 
             cursor.execute("""
                 UPDATE users 
-                SET first_name=%s, last_name=%s, email=%s, phone=%s, birth_date=%s
-                WHERE user_id=%s
+                SET first_name=?, last_name=?, email=?, phone=?, birth_date=?
+                WHERE user_id=?
             """, (first_name, last_name, email, phone, birth_date, user_id))
             conn.commit()
             flash("User updated successfully!", "success")
@@ -245,7 +245,7 @@ def edit_user(user_id):
 
         cursor.execute("""
             SELECT user_id, username, first_name, last_name, role, email, phone, birth_date, is_active
-            FROM users WHERE user_id=%s
+            FROM users WHERE user_id=?
         """, (user_id,))
         user = cursor.fetchone()
 
@@ -267,19 +267,19 @@ def delete_user(user_id):
     cursor = conn.cursor()
     try:
         # Check for child records that reference this user
-        cursor.execute("SELECT COUNT(*) FROM room_assignments WHERE user_id=%s", (user_id,))
+        cursor.execute("SELECT COUNT(*) FROM room_assignments WHERE user_id=?", (user_id,))
         assignment_count = cursor.fetchone()[0]
 
-        cursor.execute("SELECT COUNT(*) FROM payments WHERE user_id=%s", (user_id,))
+        cursor.execute("SELECT COUNT(*) FROM payments WHERE user_id=?", (user_id,))
         payment_count = cursor.fetchone()[0]
 
         if assignment_count > 0 or payment_count > 0:
             # Instead of failing with a FK constraint, perform a soft-delete (deactivate)
-            cursor.execute("UPDATE users SET is_active = 0 WHERE user_id=%s", (user_id,))
+            cursor.execute("UPDATE users SET is_active = 0 WHERE user_id=?", (user_id,))
             conn.commit()
             flash("User cannot be deleted because related records exist. User has been deactivated instead.", "warning")
         else:
-            cursor.execute("DELETE FROM users WHERE user_id=%s", (user_id,))
+            cursor.execute("DELETE FROM users WHERE user_id=?", (user_id,))
             conn.commit()
             flash("User deleted successfully!", "success")
     except Exception as e:
@@ -302,9 +302,9 @@ def login():
             return render_template('logIn.html')
 
         conn = get_db_connection()
-        cursor = conn.cursor(dictionary=True)
+        cursor = conn.cursor()
         try:
-            cursor.execute("SELECT user_id, username, password_hash, role, is_active FROM users WHERE (username=%s OR email=%s) LIMIT 1", (identifier, identifier))
+            cursor.execute("SELECT user_id, username, password_hash, role, is_active FROM users WHERE (username=? OR email=?) LIMIT 1", (identifier, identifier))
             user = cursor.fetchone()
             if not user:
                 flash('Invalid username or password', 'danger')
@@ -344,7 +344,7 @@ def logout():
 @app.route("/buildings")
 def buildings():
     conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
     buildings = []
     try:
         # role-aware query
@@ -353,7 +353,7 @@ def buildings():
                 SELECT b.building_id, b.building_name, b.address, b.total_floors, b.is_active, b.owner_id, u.username as owner_username, b.created_at
                 FROM buildings b
                 LEFT JOIN users u ON b.owner_id = u.user_id
-                WHERE b.owner_id = %s
+                WHERE b.owner_id = ?
                 ORDER BY b.building_id
             """, (session.get('user_id'),))
         elif session.get('role') == 'student':
@@ -397,7 +397,7 @@ def add_building():
                 owner_id = request.form.get('owner_id') or None
             cursor.execute("""
                 INSERT INTO buildings (building_name, address, total_floors, owner_id, is_active)
-                VALUES (%s, %s, %s, %s, 1)
+                VALUES (?, ?, ?, ?, 1)
             """, (building_name, address, total_floors, owner_id))
             conn.commit()
             flash("Building added successfully!", "success")
@@ -412,7 +412,7 @@ def add_building():
     if session.get('role') == 'admin':
         try:
             conn = get_db_connection()
-            cursor = conn.cursor(dictionary=True)
+            cursor = conn.cursor()
             cursor.execute("SELECT user_id, username, first_name, last_name FROM users WHERE role = 'landlord' AND is_active = 1 ORDER BY username")
             landlords = cursor.fetchall()
         except Exception:
@@ -431,7 +431,7 @@ def add_building():
 @app.route("/edit_building/<int:building_id>", methods=["GET", "POST"])
 def edit_building(building_id):
     conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
     building = None
     try:
         if request.method == "POST":
@@ -449,20 +449,20 @@ def edit_building(building_id):
             if owner_id is not None:
                 cursor.execute("""
                     UPDATE buildings 
-                    SET building_name=%s, address=%s, total_floors=%s, owner_id=%s
-                    WHERE building_id=%s
+                    SET building_name=?, address=?, total_floors=?, owner_id=?
+                    WHERE building_id=?
                 """, (building_name, address, total_floors, owner_id, building_id))
             else:
                 cursor.execute("""
                     UPDATE buildings 
-                    SET building_name=%s, address=%s, total_floors=%s
-                    WHERE building_id=%s
+                    SET building_name=?, address=?, total_floors=?
+                    WHERE building_id=?
                 """, (building_name, address, total_floors, building_id))
             conn.commit()
             flash("Building updated successfully!", "success")
             return redirect(url_for("buildings"))
 
-        cursor.execute("SELECT * FROM buildings WHERE building_id=%s", (building_id,))
+        cursor.execute("SELECT * FROM buildings WHERE building_id=?", (building_id,))
         building = cursor.fetchone()
 
         if not building:
@@ -502,7 +502,7 @@ def edit_building(building_id):
 @app.route("/room_types")
 def room_types():
     conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
     types = []
     try:
         cursor.execute("""
@@ -525,7 +525,7 @@ def room_types():
 @app.route("/rooms")
 def rooms():
     conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
     rooms = []
     try:
         # role-aware rooms listing
@@ -536,7 +536,7 @@ def rooms():
                 FROM rooms r
                 LEFT JOIN buildings b ON r.building_id = b.building_id
                 LEFT JOIN room_types rt ON r.type_id = rt.type_id
-                WHERE b.owner_id = %s
+                WHERE b.owner_id = ?
                 ORDER BY r.room_id
             """, (session.get('user_id'),))
         elif session.get('role') == 'student':
@@ -573,7 +573,7 @@ def rooms():
 @app.route("/assignments")
 def assignments():
     conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
     assignments = []
     try:
         # role aware assignments
@@ -586,7 +586,7 @@ def assignments():
                 LEFT JOIN users u ON ra.user_id = u.user_id
                 LEFT JOIN rooms r ON ra.room_id = r.room_id
                 LEFT JOIN buildings b ON r.building_id = b.building_id
-                WHERE b.owner_id = %s
+                WHERE b.owner_id = ?
                 ORDER BY ra.assignment_id
             """, (session.get('user_id'),))
         elif session.get('role') == 'student':
@@ -598,7 +598,7 @@ def assignments():
                 LEFT JOIN users u ON ra.user_id = u.user_id
                 LEFT JOIN rooms r ON ra.room_id = r.room_id
                 LEFT JOIN buildings b ON r.building_id = b.building_id
-                WHERE ra.user_id = %s
+                WHERE ra.user_id = ?
                 ORDER BY ra.assignment_id
             """, (session.get('user_id'),))
         else:
@@ -627,7 +627,7 @@ def assignments():
 @app.route("/payments")
 def payments():
     conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
     payments = []
     try:
         if session.get('role') == 'landlord':
@@ -640,7 +640,7 @@ def payments():
                 LEFT JOIN room_assignments ra ON p.assignment_id = ra.assignment_id
                 LEFT JOIN rooms r ON ra.room_id = r.room_id
                 LEFT JOIN buildings b ON r.building_id = b.building_id
-                WHERE b.owner_id = %s
+                WHERE b.owner_id = ?
                 ORDER BY p.payment_id DESC
             """, (session.get('user_id'),))
         elif session.get('role') == 'student':
@@ -650,7 +650,7 @@ def payments():
                        p.receipt_number
                 FROM payments p
                 LEFT JOIN users u ON p.user_id = u.user_id
-                WHERE p.user_id = %s
+                WHERE p.user_id = ?
                 ORDER BY p.payment_id DESC
             """, (session.get('user_id'),))
         else:
@@ -685,7 +685,7 @@ def payment(payment_id=None):
         try:
             cursor.execute("""
                 INSERT INTO payments (user_id, amount, payment_method, payment_date, receipt_number)
-                VALUES (%s, %s, %s, %s, %s)
+                VALUES (?, ?, ?, ?, ?)
             """, (user_id, amount, payment_method, payment_date, receipt_number))
             conn.commit()
             flash("Payment recorded successfully!", "success")
@@ -697,7 +697,7 @@ def payment(payment_id=None):
             conn.close()
     
     conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
     try:
         if session.get('role') == 'landlord':
             cursor.execute("""
@@ -706,12 +706,12 @@ def payment(payment_id=None):
                 JOIN room_assignments ra ON u.user_id = ra.user_id
                 JOIN rooms r ON ra.room_id = r.room_id
                 JOIN buildings b ON r.building_id = b.building_id
-                WHERE b.owner_id = %s AND u.is_active = 1
+                WHERE b.owner_id = ? AND u.is_active = 1
                 ORDER BY u.first_name
             """, (session.get('user_id'),))
             users = cursor.fetchall()
         elif session.get('role') == 'student':
-            cursor.execute("SELECT user_id, username, role, first_name, last_name FROM users WHERE user_id = %s AND is_active = 1", (session.get('user_id'),))
+            cursor.execute("SELECT user_id, username, role, first_name, last_name FROM users WHERE user_id = ? AND is_active = 1", (session.get('user_id'),))
             users = cursor.fetchall()
         else:
             cursor.execute("SELECT * FROM users WHERE is_active = 1 ORDER BY first_name")
@@ -732,7 +732,7 @@ def payment(payment_id=None):
 @app.route("/reports")
 def reports():
     conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    cursor = conn.cursor()
     reports = []
     try:
         cursor.execute("""
@@ -764,7 +764,7 @@ def export_payments():
                 LEFT JOIN room_assignments ra ON p.assignment_id = ra.assignment_id
                 LEFT JOIN rooms r ON ra.room_id = r.room_id
                 LEFT JOIN buildings b ON r.building_id = b.building_id
-                WHERE b.owner_id = %s
+                WHERE b.owner_id = ?
                 ORDER BY p.payment_id DESC
             """, (session.get('user_id'),))
         else:
@@ -782,7 +782,7 @@ def export_payments():
         for r in rows:
             cw.writerow(r)
         output = si.getvalue()
-        filename = f"payments_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.csv"
+        filename = f"payments_{datetime.utcnow().strftime('%Y%m%d_%H%M')}.csv"
         return Response(output, mimetype='text/csv', headers={"Content-Disposition": f"attachment;filename={filename}"})
     except Exception as e:
         flash(f'Error exporting payments: {e}', 'danger')
@@ -805,7 +805,7 @@ def export_assignments():
                 LEFT JOIN users u ON ra.user_id = u.user_id
                 LEFT JOIN rooms r ON ra.room_id = r.room_id
                 LEFT JOIN buildings b ON r.building_id = b.building_id
-                WHERE b.owner_id = %s
+                WHERE b.owner_id = ?
                 ORDER BY ra.assignment_id
             """, (session.get('user_id'),))
         else:
@@ -824,7 +824,7 @@ def export_assignments():
         for r in rows:
             cw.writerow(r)
         output = si.getvalue()
-        filename = f"assignments_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.csv"
+        filename = f"payments_{datetime.utcnow().strftime('%Y%m%d_%H%M')}.csv"
         return Response(output, mimetype='text/csv', headers={"Content-Disposition": f"attachment;filename={filename}"})
     except Exception as e:
         flash(f'Error exporting assignments: {e}', 'danger')
@@ -847,7 +847,7 @@ def export_assignments():
             cw.writerow(['report_id', 'report_type', 'report_title', 'generated_on', 'generated_by'])
             for r in rows:
                 cw.writerow(r)
-            filename = f"reports_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.csv"
+            filename = f"payments_{datetime.utcnow().strftime('%Y%m%d_%H%M')}.csv"
             return Response(si.getvalue(), mimetype='text/csv', headers={"Content-Disposition": f"attachment;filename={filename}"})
         except Exception as e:
             flash(f'Error exporting reports: {e}', 'danger')
