@@ -1,43 +1,317 @@
 {% extends '_base.html' %}
 
-{% block title %}Record Payment{% endblock %}
+{% block title %}Payments Management{% endblock %}
 
 {% block content %}
 <div class="container-modern">
-    <div class="row justify-content-center">
-        <div class="col-lg-6">
-            <div class="card-modern">
-                <div class="card-header-modern">
-                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 0.5rem;">
-                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                        <line x1="1" y1="10" x2="23" y2="10"></line>
-                    </svg>
-                    Record New Payment
-                </div>
-                <div class="p-4">
-                    <form method="POST" action="{{ url_for('payment') }}">
-                        <div class="form-group mb-3">
-                            <label class="form-label-modern">Tenant</label>
-                            <select name="user_id" class="form-control-modern" required>
-                                <option value="">Select Tenant</option>
-                                {% for user in users %}
-                                    {% if user.role == 'student' %}
-                                    <option value="{{ user.user_id }}">{{ user.first_name }} {{ user.last_name }}</option>
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 style="font-size: 1.875rem; font-weight: 700; color: var(--gray-900); margin: 0;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 0.5rem;">
+                    <rect x="2" y="5" width="20" height="14" rx="2"/>
+                    <line x1="2" y1="10" x2="22" y2="10"/>
+                </svg>
+                Payments
+            </h2>
+            <p style="color: var(--gray-600); margin: 0.25rem 0 0 0; font-size: 0.875rem;">
+                {% if session.role == 'admin' %}
+                Manage all payment records and transactions
+                {% elif session.role == 'landlord' %}
+                View payments for your buildings
+                {% else %}
+                Your payment history and outstanding balance
+                {% endif %}
+            </p>
+        </div>
+        {% if session.role in ['admin', 'landlord'] %}
+        <button class="btn-primary-modern" data-bs-toggle="modal" data-bs-target="#recordPaymentModal">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.25rem;">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Record Payment
+        </button>
+        {% endif %}
+    </div>
+
+    <!-- Stats Cards (Role-based) -->
+    <div class="row g-3 mb-4">
+        {% if session.role == 'admin' %}
+        <div class="col-md-3">
+            <div class="card-modern" style="padding: 1.25rem;">
+                <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.5rem;">Total Collected</div>
+                <div style="font-size: 1.75rem; font-weight: 700; color: var(--success);">₱{{ "{:,.2f}".format(stats.total_collected or 0) }}</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card-modern" style="padding: 1.25rem;">
+                <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.5rem;">This Month</div>
+                <div style="font-size: 1.75rem; font-weight: 700; color: var(--primary);">₱{{ "{:,.2f}".format(stats.month_collected or 0) }}</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card-modern" style="padding: 1.25rem;">
+                <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.5rem;">Total Payments</div>
+                <div style="font-size: 1.75rem; font-weight: 700; color: var(--gray-900);">{{ stats.payment_count or 0 }}</div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card-modern" style="padding: 1.25rem;">
+                <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.5rem;">Average Payment</div>
+                <div style="font-size: 1.75rem; font-weight: 700; color: var(--gray-700);">₱{{ "{:,.2f}".format(stats.avg_payment or 0) }}</div>
+            </div>
+        </div>
+        {% elif session.role == 'landlord' %}
+        <div class="col-md-4">
+            <div class="card-modern" style="padding: 1.25rem;">
+                <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.5rem;">Total Collections</div>
+                <div style="font-size: 1.75rem; font-weight: 700; color: var(--success);">₱{{ "{:,.2f}".format(stats.total_collected or 0) }}</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card-modern" style="padding: 1.25rem;">
+                <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.5rem;">This Month</div>
+                <div style="font-size: 1.75rem; font-weight: 700; color: var(--primary);">₱{{ "{:,.2f}".format(stats.month_collected or 0) }}</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card-modern" style="padding: 1.25rem;">
+                <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.5rem;">Transactions</div>
+                <div style="font-size: 1.75rem; font-weight: 700; color: var(--gray-900);">{{ stats.payment_count or 0 }}</div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-md-4">
+            <div class="card-modern" style="padding: 1.25rem;">
+                <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.5rem;">Total Paid</div>
+                <div style="font-size: 1.75rem; font-weight: 700; color: var(--success);">₱{{ "{:,.2f}".format(stats.total_paid or 0) }}</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card-modern" style="padding: 1.25rem;">
+                <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.5rem;">Current Balance</div>
+                <div style="font-size: 1.75rem; font-weight: 700; color: var(--warning);">₱{{ "{:,.2f}".format(stats.balance or 0) }}</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card-modern" style="padding: 1.25rem;">
+                <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.5rem;">Next Due</div>
+                <div style="font-size: 1.125rem; font-weight: 600; color: var(--gray-900); margin-top: 0.75rem;">{{ stats.next_due or 'N/A' }}</div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Filters Section -->
+    {% if session.role in ['admin', 'landlord'] %}
+    <div class="card-modern mb-4" style="padding: 1.25rem;">
+        <form method="GET" action="{{ url_for('payments') }}" class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label-modern">Student</label>
+                <select name="student_filter" class="form-control-modern">
+                    <option value="">All Students</option>
+                    {% for student in students %}
+                    <option value="{{ student.user_id }}" {% if request.args.get('student_filter') == student.user_id|string %}selected{% endif %}>
+                        {{ student.first_name }} {{ student.last_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% if session.role == 'admin' %}
+            <div class="col-md-3">
+                <label class="form-label-modern">Building</label>
+                <select name="building_filter" class="form-control-modern">
+                    <option value="">All Buildings</option>
+                    {% for building in buildings %}
+                    <option value="{{ building.building_id }}" {% if request.args.get('building_filter') == building.building_id|string %}selected{% endif %}>
+                        {{ building.building_name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% endif %}
+            <div class="col-md-2">
+                <label class="form-label-modern">Method</label>
+                <select name="method_filter" class="form-control-modern">
+                    <option value="">All Methods</option>
+                    <option value="cash" {% if request.args.get('method_filter') == 'cash' %}selected{% endif %}>Cash</option>
+                    <option value="bank_transfer" {% if request.args.get('method_filter') == 'bank_transfer' %}selected{% endif %}>Bank Transfer</option>
+                    <option value="gcash" {% if request.args.get('method_filter') == 'gcash' %}selected{% endif %}>GCash</option>
+                    <option value="check" {% if request.args.get('method_filter') == 'check' %}selected{% endif %}>Check</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label-modern">From</label>
+                <input type="date" name="date_from" class="form-control-modern" value="{{ request.args.get('date_from', '') }}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label-modern">To</label>
+                <input type="date" name="date_to" class="form-control-modern" value="{{ request.args.get('date_to', '') }}">
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn-primary-modern">Filter</button>
+                <a href="{{ url_for('payments') }}" class="btn-secondary-modern">Clear</a>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+
+    <!-- Payments Table -->
+    <div class="card-modern">
+        <div class="card-header-modern d-flex justify-content-between align-items-center">
+            <span>Payment Records</span>
+            {% if session.role in ['admin', 'landlord'] %}
+            <a href="{{ url_for('export_payments') }}" class="btn-secondary-modern btn-sm">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.25rem;">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Export CSV
+            </a>
+            {% endif %}
+        </div>
+        <div class="table-responsive">
+            <table class="table-modern">
+                <thead>
+                    <tr>
+                        <th>Receipt #</th>
+                        {% if session.role in ['admin', 'landlord'] %}
+                        <th>Student</th>
+                        {% endif %}
+                        <th>Amount</th>
+                        <th>Method</th>
+                        <th>Payment Date</th>
+                        {% if session.role in ['admin', 'landlord'] %}
+                        <th>Period</th>
+                        <th>Assignment</th>
+                        {% endif %}
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if payments %}
+                        {% for payment in payments %}
+                        <tr>
+                            <td><span class="badge-primary-modern">{{ payment.receipt_number or 'N/A' }}</span></td>
+                            {% if session.role in ['admin', 'landlord'] %}
+                            <td>{{ payment.first_name }} {{ payment.last_name }}</td>
+                            {% endif %}
+                            <td style="font-weight: 600; color: var(--success);">₱{{ "{:,.2f}".format(payment.amount) }}</td>
+                            <td>
+                                <span class="badge-secondary-modern">
+                                    {% if payment.payment_method == 'cash' %}Cash
+                                    {% elif payment.payment_method == 'bank_transfer' %}Bank Transfer
+                                    {% elif payment.payment_method == 'gcash' %}GCash
+                                    {% elif payment.payment_method == 'check' %}Check
+                                    {% else %}{{ payment.payment_method }}
                                     {% endif %}
+                                </span>
+                            </td>
+                            <td>{{ payment.payment_date }}</td>
+                            {% if session.role in ['admin', 'landlord'] %}
+                            <td>
+                                {% if payment.payment_period_start and payment.payment_period_end %}
+                                {{ payment.payment_period_start }} to {{ payment.payment_period_end }}
+                                {% else %}
+                                <span style="color: var(--gray-400);">Not specified</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if payment.room_number and payment.building_name %}
+                                {{ payment.building_name }} - {{ payment.room_number }}
+                                {% else %}
+                                <span style="color: var(--gray-400);">N/A</span>
+                                {% endif %}
+                            </td>
+                            {% endif %}
+                            <td>
+                                <div class="d-flex gap-1">
+                                    <a href="{{ url_for('view_payment', payment_id=payment.payment_id) }}" class="btn-action-modern" title="View Details">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                            <circle cx="12" cy="12" r="3"/>
+                                        </svg>
+                                    </a>
+                                    {% if session.role == 'admin' %}
+                                    <a href="{{ url_for('edit_payment', payment_id=payment.payment_id) }}" class="btn-action-modern" title="Edit">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                        </svg>
+                                    </a>
+                                    <form method="POST" action="{{ url_for('delete_payment', payment_id=payment.payment_id) }}" style="display: inline;" onsubmit="return confirm('Delete this payment record?');">
+                                        <button type="submit" class="btn-action-modern btn-action-danger" title="Delete">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <polyline points="3 6 5 6 21 6"/>
+                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                            </svg>
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="8" class="text-center" style="padding: 3rem; color: var(--gray-500);">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 1rem; display: block; opacity: 0.5;">
+                                    <rect x="2" y="5" width="20" height="14" rx="2"/>
+                                    <line x1="2" y1="10" x2="22" y2="10"/>
+                                </svg>
+                                <div style="font-weight: 600; margin-bottom: 0.5rem;">No payment records found</div>
+                                <div style="font-size: 0.875rem;">
+                                    {% if session.role in ['admin', 'landlord'] %}
+                                    Click "Record Payment" to add your first payment
+                                    {% else %}
+                                    No payments have been recorded yet
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Record Payment Modal -->
+{% if session.role in ['admin', 'landlord'] %}
+<div class="modal fade" id="recordPaymentModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Record New Payment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('record_payment') }}">
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label-modern">Student *</label>
+                            <select name="user_id" id="student_select" class="form-control-modern" required onchange="loadAssignments()">
+                                <option value="">Select Student</option>
+                                {% for student in students %}
+                                <option value="{{ student.user_id }}">{{ student.first_name }} {{ student.last_name }}</option>
                                 {% endfor %}
                             </select>
                         </div>
-
-                        <div class="form-group mb-3">
-                            <label class="form-label-modern">Amount (₱)</label>
-                            <div class="position-relative">
-                                <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--gray-600); font-weight: 600;">₱</span>
-                                <input type="number" name="amount" class="form-control-modern" step="0.01" min="0" placeholder="0.00" style="padding-left: 2rem;" required>
-                            </div>
+                        <div class="col-md-6">
+                            <label class="form-label-modern">Assignment</label>
+                            <select name="assignment_id" id="assignment_select" class="form-control-modern">
+                                <option value="">Select assignment first</option>
+                            </select>
+                            <small class="text-muted">Optional - links payment to a room assignment</small>
                         </div>
-
-                        <div class="form-group mb-3">
-                            <label class="form-label-modern">Payment Method</label>
+                        <div class="col-md-6">
+                            <label class="form-label-modern">Amount (₱) *</label>
+                            <input type="number" name="amount" class="form-control-modern" step="0.01" min="0" placeholder="0.00" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label-modern">Payment Method *</label>
                             <select name="payment_method" class="form-control-modern" required>
                                 <option value="">Select Method</option>
                                 <option value="cash">Cash</option>
@@ -46,34 +320,72 @@
                                 <option value="check">Check</option>
                             </select>
                         </div>
-
-                        <div class="form-group mb-3">
-                            <label class="form-label-modern">Payment Date</label>
-                            <input type="date" name="payment_date" class="form-control-modern" required>
+                        <div class="col-md-6">
+                            <label class="form-label-modern">Payment Date *</label>
+                            <input type="date" name="payment_date" class="form-control-modern" value="{{ today }}" required>
                         </div>
-
-                        <div class="form-group mb-4">
+                        <div class="col-md-6">
                             <label class="form-label-modern">Receipt Number</label>
-                            <input type="text" name="receipt_number" class="form-control-modern" placeholder="e.g., RCPT-001" required>
-                            <small style="color: var(--gray-600); font-size: 0.8125rem; display: block; margin-top: 0.25rem;">
-                                Must be unique for each payment
-                            </small>
+                            <input type="text" name="receipt_number" class="form-control-modern" placeholder="Auto-generated if empty">
+                            <small class="text-muted">Leave blank to auto-generate</small>
                         </div>
-
-                        <div class="d-flex gap-2 justify-content-end">
-                            <a href="{{ url_for('payments') }}" class="btn-secondary-modern">Cancel</a>
-                            <button type="submit" class="btn-primary-modern">
-                                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
-                                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
-                                </svg>
-                                Record Payment
-                            </button>
+                        <div class="col-md-6">
+                            <label class="form-label-modern">Period Start</label>
+                            <input type="date" name="payment_period_start" class="form-control-modern">
                         </div>
-                    </form>
+                        <div class="col-md-6">
+                            <label class="form-label-modern">Period End</label>
+                            <input type="date" name="payment_period_end" class="form-control-modern">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label-modern">Notes</label>
+                            <textarea name="notes" class="form-control-modern" rows="2" placeholder="Optional notes about this payment"></textarea>
+                        </div>
+                    </div>
                 </div>
-            </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary-modern" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn-primary-modern">Record Payment</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+{% endif %}
+
+<script>
+function loadAssignments() {
+    const userId = document.getElementById('student_select').value;
+    const assignmentSelect = document.getElementById('assignment_select');
+    
+    if (!userId) {
+        assignmentSelect.innerHTML = '<option value="">Select student first</option>';
+        return;
+    }
+    
+    fetch(`/api/assignments/${userId}`)
+        .then(response => response.json())
+        .then(data => {
+            assignmentSelect.innerHTML = '<option value="">No assignment (general payment)</option>';
+            data.assignments.forEach(assignment => {
+                const option = document.createElement('option');
+                option.value = assignment.assignment_id;
+                option.textContent = `${assignment.building_name} - Room ${assignment.room_number} (₱${assignment.monthly_rate})`;
+                assignmentSelect.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Error loading assignments:', error);
+            assignmentSelect.innerHTML = '<option value="">Error loading assignments</option>';
+        });
+}
+
+function viewPayment(paymentId) {
+    window.location.href = `/payment/${paymentId}/view`;
+}
+
+function editPayment(paymentId) {
+    window.location.href = `/payment/${paymentId}/edit`;
+}
+</script>
 {% endblock %}

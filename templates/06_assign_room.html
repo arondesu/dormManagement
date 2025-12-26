@@ -1,0 +1,67 @@
+{% extends '_base.html' %}
+
+{% block title %}Assign Room{% endblock %}
+
+{% block content %}
+<div class="container-modern">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card-modern">
+                <div class="card-header-modern">
+                    Assign Room To Tenant
+                </div>
+                <div class="p-4">
+                    <form method="POST" action="{{ url_for('admin_assign_room') }}">
+
+                        <!-- Tenant Username or Email -->
+                        <div class="form-group mb-3">
+                            <label class="form-label-modern">Tenant Username or Email</label>
+                            <input type="text" name="username_or_email" class="form-control-modern" required
+                                placeholder="Enter tenant username or email">
+                        </div>
+
+                        <!-- Room Selection -->
+                        <div class="form-group mb-3">
+                            <label class="form-label-modern">Room</label>
+                            <select name="room_id" class="form-control-modern" required>
+                                <option value="">Select a room</option>
+                                {% for room in rooms %}
+                                <option value="{{ room.room_id }}">
+                                    {{ room.room_number }} - {{ room.building_name }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Dates -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label-modern">From</label>
+                                <input type="date" name="start_date" class="form-control-modern" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label-modern">Until</label>
+                                <input type="date" name="end_date" class="form-control-modern">
+                            </div>
+                        </div>
+
+                        <!-- Rate -->
+                        <div class="form-group mb-3">
+                            <label class="form-label-modern">Monthly Rate</label>
+                            <input type="number" step="0.01" name="monthly_rate" class="form-control-modern">
+                        </div>
+
+                        <input type="hidden" name="assigned_by" value="{{ current_user.user_id }}">
+
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a href="{{ url_for('users') }}" class="btn-secondary-modern">Cancel</a>
+                            <button type="submit" class="btn-primary-modern">Confirm Assignment</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

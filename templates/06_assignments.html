@@ -11,14 +11,27 @@
             <p class="page-subtitle">Track tenant-to-room assignments and contracts</p>
         </div>
         {% if session.get('role') in ['admin', 'landlord'] %}
-        <a href="{{ url_for('export_assignments') }}" class="btn-secondary-modern">
-            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="7 10 12 15 17 10"></polyline>
-                <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-            Export CSV
-        </a>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('admin_assign_room') }}" class="btn-primary-modern">
+                
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" 
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                Assign Room
+            </a>
+
+            <a href="{{ url_for('export_assignments') }}" class="btn-secondary-modern">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Export CSV
+            </a>
+        </div>
+
         {% endif %}
     </div>
 
@@ -27,9 +40,9 @@
         <div class="row g-3">
             <div class="col-md-8">
                 <div class="position-relative">
-                    <svg width="20" height="20" fill="none" stroke="#94a3b8" stroke-width="2" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%);">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%);">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                     </svg>
                     <input type="text" class="form-control-modern" placeholder="Search by tenant or room..." style="padding-left: 2.5rem;">
                 </div>
@@ -53,7 +66,8 @@
                     <th>Tenant</th>
                     <th>Room</th>
                     <th>Building</th>
-                    <th>Contract Period</th>
+                    <th>Start Period</th>
+                    <th>End Period</th>
                     <th>Monthly Rate</th>
                     <th>Status</th>
                     <th style="text-align: right;">Actions</th>
@@ -74,11 +88,12 @@
                             <span style="font-size: 0.875rem;">{{ assign.building_name or '-' }}</span>
                         </td>
                         <td>
-                            <div style="font-size: 0.875rem;">
-                                <div>{{ assign.start_date }}</div>
-                                <div style="color: var(--gray-600);">to {{ assign.end_date }}</div>
-                            </div>
+                            <span style="font-size: 0.875rem;">{{ assign.start_date or '-' }}</span>
                         </td>
+                        <td>
+                            <span style="font-size: 0.875rem;">{{ assign.end_date or '-' }}</span>
+                        </td>
+        
                         <td>
                             <span style="font-weight: 600; color: var(--primary);">₱{{ "%.2f"|format(assign.monthly_rate) }}</span>
                         </td>
@@ -87,13 +102,14 @@
                         </td>
                         <td style="text-align: right;">
                             <div class="d-flex gap-2 justify-content-end">
-                                <button class="btn-secondary-modern" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">
-                                    View
-                                </button>
+                                
                                 {% if session.get('role') in ['admin', 'landlord'] %}
-                                <button class="btn-secondary-modern" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">
+                               
+                                <a href="{{ url_for('edit_assignment', assignment_id=assign.assignment_id) }}" 
+                                class="btn-secondary-modern" 
+                                style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">
                                     Edit
-                                </button>
+                                </a>
                                 {% endif %}
                             </div>
                         </td>
@@ -102,9 +118,9 @@
                 {% else %}
                     <tr>
                         <td colspan="7" style="text-align: center; padding: 3rem; color: var(--gray-600);">
-                            <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 1rem; display: block; opacity: 0.3;">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                <polyline points="14 2 14 8 20 8"></polyline>
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 1rem; display: block; opacity: 0.3;">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
                             </svg>
                             <div style="font-weight: 600; margin-bottom: 0.5rem;">No assignments found</div>
                             <div style="font-size: 0.875rem;">Assignments will appear here once tenants are assigned to rooms</div>

@@ -57,7 +57,7 @@ def seed_database():
         print("Seeding rooms...")
         rooms_data = [
             # Building 1 (Dormitory A)
-            (1, 1, 'A101', 1, 1, 'Newly renovated'),
+            (1, 1, 'A101', 1, 0, 'Currently occupied - EXPIRED assignment (test scenario)'),
             (1, 2, 'A102', 1, 1, 'Good ventilation'),
             (1, 2, 'A103', 1, 0, 'Currently occupied'),
             (1, 3, 'A201', 2, 1, 'Premium suite room'),
@@ -85,6 +85,11 @@ def seed_database():
         assignments_data = [
             (3, 3, '2025-01-01', '2025-12-31', 3500.00, 'active', 1, 'Initial assignment'),  # student1 -> A103
             (4, 8, '2025-02-01', '2025-12-31', 3500.00, 'active', 1, 'Mid-year assignment'),  # student2 -> B201
+            
+            # EXPIRED ASSIGNMENT SCENARIO (for testing expire_assignments feature)
+            # John had Room 101 (A101) from Jan 1 - Nov 30, 2025
+            # Today is Dec 13, 2025 - this should be auto-expired
+            (5, 1, '2025-01-01', '2025-11-30', 5000.00, 'active', 1, 'EXPIRED - Should be completed'),  # student3 -> A101 (EXPIRED!)
         ]
         
         cursor.executemany("""
@@ -135,5 +140,5 @@ def seed_database():
     finally:
         conn.close()
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     seed_database()

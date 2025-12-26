@@ -1,0 +1,183 @@
+{% extends '_base.html' %}
+
+{% block title %}Edit Assignment{% endblock %}
+
+{% block content %}
+<div class="container-modern">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card-modern">
+                <div class="card-header-modern">
+                    Edit Assignment
+                </div>
+
+                <div class="p-4">
+          <form method="POST" id="editAssignmentForm">
+
+            <!-- Tenant (read-only) -->
+                        <div class="form-group mb-3">
+                            <label class="form-label-modern">Tenant</label>
+              <input type="text" class="form-control-modern" value="{{ assignment.first_name }} {{ assignment.last_name }}" disabled>
+                        </div>
+
+            <!-- Building (select) -->
+                        <div class="form-group mb-3">
+                            <label class="form-label-modern">Building</label>
+              <select name="building_id" id="buildingSelect" class="form-control-modern" required>
+                                {% for b in buildings %}
+                                    <option value="{{ b.building_id }}" {% if b.building_id == assignment.building_id %}selected{% endif %}>
+                                        {{ b.building_name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+              <!-- hidden fallback to always send value when select is disabled -->
+              <input type="hidden" name="building_id_hidden" id="buildingHidden" value="{{ assignment.building_id }}">
+                        </div>
+
+            <!-- Room (select) -->
+<div class="form-group mb-3">
+    <label class="form-label-modern">Room</label>
+              <select name="room_number" id="roomSelect" class="form-control-modern" required>
+        {% for r in rooms %}
+                  <option value="{{ r.room_number }}" {% if r.room_number == assignment.room_number %}selected{% endif %} {% if r.is_available == 0 and r.room_number != assignment.room_number %}data-occupied="1"{% endif %}>
+                    {{ r.room_number }}{% if r.is_available == 0 and r.room_number != assignment.room_number %} (Occupied){% endif %}
+            </option>
+        {% endfor %}
+    </select>
+              <!-- hidden fallback to always send value when select is disabled -->
+              <input type="hidden" name="room_number_hidden" id="roomHidden" value="{{ assignment.room_number }}">
+</div>
+
+            <!-- Start / End Dates -->
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label-modern">Start Date</label>
+                <input type="date" name="start_date" id="startDate" class="form-control-modern" value="{{ assignment.start_date }}" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label-modern">End Date</label>
+                <input type="date" name="end_date" id="endDate" class="form-control-modern" value="{{ assignment.end_date }}">
+                            </div>
+                        </div>
+
+            <!-- Monthly Rate -->
+                        <div class="form-group mb-3">
+                            <label class="form-label-modern">Monthly Rate</label>
+              <input type="number" name="monthly_rate" id="monthlyRate" step="0.01" class="form-control-modern" value="{{ assignment.monthly_rate }}">
+                        </div>
+
+            <!-- Status -->
+                        <div class="form-group mb-4">
+                            <label class="form-label-modern">Status</label>
+              <select name="status" id="statusSelect" class="form-control-modern" required>
+                                {% for s in statuses %}
+                                <option value="{{ s }}" {% if s == assignment.status %}selected{% endif %}>{{ s.title() }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+            <!-- Buttons -->
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a href="{{ url_for('assignments') }}" class="btn-secondary-modern">Cancel</a>
+                            <button type="submit" class="btn-primary-modern">Save Changes</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% block scripts %}
+<script>
+(function(){
+  const statusSelect = document.getElementById("statusSelect");
+  const buildingSelect = document.getElementById("buildingSelect");
+  const roomSelect = document.getElementById("roomSelect");
+  const monthlyRate = document.getElementById("monthlyRate");
+  const endDate = document.getElementById("endDate");
+  const buildingHidden = document.getElementById("buildingHidden");
+  const roomHidden = document.getElementById("roomHidden");
+
+  // sync hidden values from visible selects
+  function syncHidden() {
+    buildingHidden.value = buildingSelect.value;
+    roomHidden.value = roomSelect.value;
+  }
+
+  // toggle read-only / disabled states according to status
+  function updateReadOnlyState() {
+    const completed = (statusSelect.value === "completed");
+
+    // For selects we use disabled for UI but keep hidden inputs to submit values
+    buildingSelect.disabled = completed;
+    roomSelect.disabled = completed;
+
+    // For inputs (dates, number) use readonly so they still submit
+    monthlyRate.readOnly = completed;
+    endDate.readOnly = completed;
+    // startDate is readonly in template already
+
+    // still sync hidden to ensure POST has values even if selects are disabled
+    syncHidden();
+  }
+
+  // load rooms for a building (call server endpoint /get_rooms/<building_id>/<current_room_id> if needed)
+  function loadRoomsForBuilding(buildingId) {
+    if (!buildingId) {
+      roomSelect.innerHTML = '<option value="">Select a room</option>';
+      syncHidden();
+      return;
+    }
+
+    // you have /get_rooms/<building_id> in server; it returns {"rooms": ["101","102"...]}
+        fetch(`/get_rooms/${buildingId}`)
+            .then(res => res.json())
+            .then(data => {
+        // data may be {"rooms": [...]} or array if you used other endpoint
+        const rooms = data.rooms || data;
+        const currentRoomNumber = roomHidden.value || "{{ assignment.room_number }}";
+
+                roomSelect.innerHTML = '';
+        if (rooms.length) {
+          rooms.forEach(rn => {
+                        const opt = document.createElement('option');
+            opt.value = rn;
+            opt.textContent = rn;
+            // preserve selection if it matches current assignment
+            if (rn === currentRoomNumber) opt.selected = true;
+                        roomSelect.appendChild(opt);
+                    });
+                } else {
+                    const opt = document.createElement('option');
+                    opt.value = '';
+          opt.textContent = 'No rooms available';
+                    roomSelect.appendChild(opt);
+                }
+        syncHidden();
+            })
+            .catch(err => {
+        console.error('Error loading rooms:', err);
+      });
+  }
+
+  // Event listeners
+  buildingSelect.addEventListener('change', function() {
+    loadRoomsForBuilding(this.value);
+    syncHidden();
+  });
+
+  roomSelect.addEventListener('change', syncHidden);
+  statusSelect.addEventListener('change', updateReadOnlyState);
+
+  // initialize on page load
+  document.addEventListener('DOMContentLoaded', function(){
+    // ensure hidden inputs are in sync
+    syncHidden();
+    updateReadOnlyState();
+  });
+})();
+</script>
+{% endblock %}
+
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends '_base.html' %}
+
+{% block title %}Edit Room{% endblock %}
+
+{% block content %}
+<div class="container-modern">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            {% if room %}
+            <div class="card-modern">
+                <div class="card-header-modern">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 0.5rem;">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                    Edit Room
+                </div>
+                <div class="p-4">
+                    <form method="POST">
+                        <div class="form-group mb-3">
+                            <label class="form-label-modern">Building</label>
+                            <input type="text" class="form-control-modern" value="{{ room.building_name }}" disabled style="background: var(--gray-100); cursor: not-allowed;">
+                            <small style="color: var(--gray-600); font-size: 0.8125rem; display: block; margin-top: 0.25rem;">
+                                Building cannot be changed
+                            </small>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label-modern">Room Number</label>
+                                <input type="text" name="room_number" class="form-control-modern" value="{{ room.room_number }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label-modern">Floor Number</label>
+                                <select name="floor_number" class="form-control-modern" required>
+                                    {% for f in floors %}
+                                    <option value="{{ f }}" {% if f == room.floor_number %}selected{% endif %}>
+                                        Floor {{ f }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label-modern">Room Type</label>
+                            <select name="type_id" class="form-control-modern" required>
+                                {% for type in room_types %}
+                                <option value="{{ type.type_id }}" {% if type.type_id == room.type_id %}selected{% endif %}>{{ type.type_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+<!--
+                        <div class="form-group mb-4">
+                            <label class="form-label-modern">Availability</label>
+                            <select name="is_available" class="form-control-modern" required>
+                                <option value="1" {% if room.is_available %}selected{% endif %}>Available</option>
+                                <option value="0" {% if not room.is_available %}selected{% endif %}>Occupied</option>
+                            </select>
+                        </div>
+-->
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a href="{{ url_for('rooms') }}" class="btn-secondary-modern">Cancel</a>
+                            <button type="submit" class="btn-primary-modern">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+            <div class="alert-modern alert-danger">
+                Room not found. <a href="{{ url_for('rooms') }}" style="color: inherit; text-decoration: underline;">Back to Rooms</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

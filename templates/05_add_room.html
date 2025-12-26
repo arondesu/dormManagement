@@ -1,0 +1,82 @@
+{% extends '_base.html' %}
+
+{% block title %}Add Room{% endblock %}
+
+{% block content %}
+<div class="container-modern">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card-modern">
+                <div class="card-header-modern">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 0.5rem;">
+                        <rect x="3" y="9" width="18" height="13" rx="2" ry="2"/>
+                        <path d="M9 22V12h6v10"/>
+                    </svg>
+                    Add Room
+                </div>
+                <div class="p-4">
+                    <form method="POST">
+                        <div class="form-group mb-3">
+                            <label class="form-label-modern">Building</label>
+                            <select name="building_id" id="building_id" class="form-control-modern" required>
+                                <option value="">Select Building</option>
+                                {% for b in buildings %}
+                                    <option value="{{ b.building_id }}" data-floors="{{ b.total_floors }}">{{ b.building_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label-modern">Floor Number</label>
+                            <select name="floor_number" id="floor_number" class="form-control-modern" required>
+                                <option value="">Select Floor</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label-modern">Room Number</label>
+                            <input type="text" name="room_number" class="form-control-modern" placeholder="e.g., 101" required>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label class="form-label-modern">Room Type</label>
+                            <select name="type_id" class="form-control-modern" required>
+                                <option value="">Select Room Type</option>
+                                {% for t in room_types %}
+                                    <option value="{{ t.type_id }}">{{ t.type_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a href="{{ url_for('rooms') }}" class="btn-secondary-modern">Cancel</a>
+                            <button type="submit" class="btn-primary-modern">Add Room</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('building_id').addEventListener('change', function() {
+    const buildingId = this.value;
+    const floorSelect = document.getElementById('floor_number');
+    floorSelect.innerHTML = '<option value="">Select Floor</option>';
+
+    if (buildingId) {
+        fetch(`/building_floors/${buildingId}`)
+            .then(res => res.json())
+            .then(floors => {
+                floors.forEach(floor => {
+                    const opt = document.createElement('option');
+                    opt.value = floor;
+                    opt.text = `Floor ${floor}`;
+                    floorSelect.appendChild(opt);
+                });
+            });
+    }
+});
+</script>
+{% endblock %}
