@@ -1,0 +1,92 @@
+from flask import Blueprint, redirect, render_template, session, url_for
+
+from db import get_db_connection
+
+
+bp = Blueprint("main", __name__)
+
+
+@bp.route("/get_rooms/<int:building_id>")
+def get_rooms(building_id):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT room_number FROM rooms WHERE building_id = ? AND is_available = 1",
+        (building_id,),
+    )
+    rooms = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return {"rooms": [r["room_number"] for r in rooms]}
+
+
+@bp.route("/")
+def home():
+    if not session.get("user_id"):
+        return redirect(url_for("login"))
+
+    user_id = session.get("user_id")
+    role = session.get("role")
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    if role == "admin":
+        cursor.execute("SELECT COUNT(*) AS total_rooms FROM rooms")
+        total_rooms = cursor.fetchone()["total_rooms"]
+
+        cursor.execute("SELECT COUNT(*) AS occupied FROM rooms WHERE is_available = 0")
+        occupied = cursor.fetchone()["occupied"]
+
+        cursor.execute("SELECT COUNT(*) AS available FROM rooms WHERE is_available = 1")
+        available = cursor.fetchone()["available"]
+
+        cursor.execute("SELECT COUNT(*) AS pending FROM room_assignments WHERE status='pending'")
+        pending = cursor.fetchone()["pending"]
+    elif role == "landlord":
+        cursor.execute(
+            "SELECT COUNT(*) AS total_buildings FROM buildings WHERE owner_id = ?",
+            (user_id,),
+        )
+        total_buildings = cursor.fetchone()["total_buildings"]
+
+        cursor.execute(
+            """
+            SELECT COUNT(*) AS total_rooms,
+                   SUM(CASE WHEN is_available = 0 THEN 1 ELSE 0 END) AS occupied,
+                   SUM(CASE WHEN is_available = 1 THEN 1 ELSE 0 END) AS available
+            FROM rooms
+            WHERE building_id IN (SELECT building_id FROM buildings WHERE owner_id = ?)
+        """,
+            (user_id,),
+        )
+        rooms_stats = cursor.fetchone()
+        total_rooms = rooms_stats["total_rooms"] or 0
+        occupied = rooms_stats["occupied"] or 0
+        available = rooms_stats["available"] or 0
+
+        cursor.execute(
+            """
+            SELECT COUNT(*) AS pending
+            FROM room_assignments ra
+            JOIN rooms r ON ra.room_id = r.room_id
+            WHERE r.building_id IN (SELECT building_id FROM buildings WHERE owner_id = ?)
+              AND ra.status = 'pending'
+        """,
+            (user_id,),
+        )
+        pending = cursor.fetchone()["pending"]
+    else:
+        total_rooms = occupied = available = pending = None
+
+    cursor.close()
+    conn.close()
+
+    return render_template(
+        "index.html",
+        role=role,
+        total_rooms=total_rooms,
+        occupied=occupied,
+        available=available,
+        pending=pending,
+    )
