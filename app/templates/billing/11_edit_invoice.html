@@ -1,0 +1,89 @@
+{% extends '_base.html' %}
+
+{% block title %}Edit Invoice{% endblock %}
+
+{% block content %}
+<div class="container-modern">
+    <div class="page-header">
+        <h1 class="page-title">Edit Invoice</h1>
+        <p class="page-subtitle">Update invoice values and status</p>
+    </div>
+
+    <div class="card-modern card-pad-sm">
+        <form method="POST">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label-modern">Tenant</label>
+                    <select name="tenant_id" class="form-control-modern">
+                        <option value="">Select tenant</option>
+                        {% for tenant in tenants %}
+                            <option value="{{ tenant.tenant_id }}" {% if invoice.tenant_id == tenant.tenant_id %}selected{% endif %}>{{ tenant.first_name }} {{ tenant.last_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label-modern">Assignment</label>
+                    <select name="assignment_id" class="form-control-modern">
+                        <option value="">Select assignment</option>
+                        {% for a in assignments %}
+                            <option value="{{ a.assignment_id }}" {% if invoice.assignment_id == a.assignment_id %}selected{% endif %}>{{ a.building_name }} - Room {{ a.room_number }} ({{ a.first_name }} {{ a.last_name }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-modern">Invoice Number</label>
+                    <input type="text" name="invoice_number" value="{{ invoice.invoice_number }}" class="form-control-modern" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-modern">Issue Date</label>
+                    <input type="date" name="issue_date" value="{{ invoice.issue_date }}" class="form-control-modern" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-modern">Due Date</label>
+                    <input type="date" name="due_date" value="{{ invoice.due_date }}" class="form-control-modern" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-modern">Period Start</label>
+                    <input type="date" name="period_start" value="{{ invoice.period_start or '' }}" class="form-control-modern">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-modern">Period End</label>
+                    <input type="date" name="period_end" value="{{ invoice.period_end or '' }}" class="form-control-modern">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-modern">Status</label>
+                    <select name="status" class="form-control-modern">
+                        <option value="draft" {% if invoice.status == 'draft' %}selected{% endif %}>Draft</option>
+                        <option value="unpaid" {% if invoice.status == 'unpaid' %}selected{% endif %}>Unpaid</option>
+                        <option value="partial" {% if invoice.status == 'partial' %}selected{% endif %}>Partial</option>
+                        <option value="paid" {% if invoice.status == 'paid' %}selected{% endif %}>Paid</option>
+                        <option value="overdue" {% if invoice.status == 'overdue' %}selected{% endif %}>Overdue</option>
+                        <option value="cancelled" {% if invoice.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-modern">Subtotal</label>
+                    <input type="number" step="0.01" name="subtotal" value="{{ invoice.subtotal or 0 }}" class="form-control-modern" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-modern">Late Fee</label>
+                    <input type="number" step="0.01" name="late_fee" value="{{ invoice.late_fee or 0 }}" class="form-control-modern">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-modern">Amount Paid</label>
+                    <input type="number" step="0.01" name="amount_paid" value="{{ invoice.amount_paid or 0 }}" class="form-control-modern">
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label-modern">Notes</label>
+                    <textarea name="notes" class="form-control-modern" rows="3">{{ invoice.notes or '' }}</textarea>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn-primary-modern">Save Changes</button>
+                <a href="{{ url_for('invoices') }}" class="btn-secondary-modern">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

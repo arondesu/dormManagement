@@ -1,0 +1,81 @@
+{% extends '_base.html' %}
+
+{% block title %}Edit Maintenance Ticket{% endblock %}
+
+{% block content %}
+<div class="container-modern">
+    <div class="page-header">
+        <h1 class="page-title">Edit Maintenance Ticket</h1>
+        <p class="page-subtitle">Update issue status and assignment</p>
+    </div>
+
+    <div class="card-modern card-pad-sm">
+        <form method="POST">
+            <div class="row g-3">
+                <div class="col-md-8">
+                    <label class="form-label-modern">Title</label>
+                    <input type="text" name="title" value="{{ ticket.title }}" class="form-control-modern" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-modern">Priority</label>
+                    <select name="priority" class="form-control-modern">
+                        <option value="low" {% if ticket.priority == 'low' %}selected{% endif %}>Low</option>
+                        <option value="medium" {% if ticket.priority == 'medium' %}selected{% endif %}>Medium</option>
+                        <option value="high" {% if ticket.priority == 'high' %}selected{% endif %}>High</option>
+                        <option value="urgent" {% if ticket.priority == 'urgent' %}selected{% endif %}>Urgent</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-modern">Status</label>
+                    <select name="status" class="form-control-modern">
+                        <option value="open" {% if ticket.status == 'open' %}selected{% endif %}>Open</option>
+                        <option value="in_progress" {% if ticket.status == 'in_progress' %}selected{% endif %}>In Progress</option>
+                        <option value="resolved" {% if ticket.status == 'resolved' %}selected{% endif %}>Resolved</option>
+                        <option value="closed" {% if ticket.status == 'closed' %}selected{% endif %}>Closed</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-modern">Room</label>
+                    <select name="room_id" class="form-control-modern">
+                        <option value="">Select room</option>
+                        {% for room in rooms %}
+                            <option value="{{ room.room_id }}" {% if ticket.room_id == room.room_id %}selected{% endif %}>{{ room.building_name }} - Room {{ room.room_number }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-modern">Tenant</label>
+                    <select name="tenant_id" class="form-control-modern">
+                        <option value="">Select tenant</option>
+                        {% for tenant in tenants %}
+                            <option value="{{ tenant.tenant_id }}" {% if ticket.tenant_id == tenant.tenant_id %}selected{% endif %}>{{ tenant.first_name }} {{ tenant.last_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label-modern">Assign To</label>
+                    <select name="assigned_to" class="form-control-modern">
+                        <option value="">Unassigned</option>
+                        {% for member in staff %}
+                            <option value="{{ member.user_id }}" {% if ticket.assigned_to == member.user_id %}selected{% endif %}>{{ member.first_name }} {{ member.last_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label-modern">Description</label>
+                    <textarea name="description" class="form-control-modern" rows="3">{{ ticket.description or '' }}</textarea>
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label-modern">Notes</label>
+                    <textarea name="notes" class="form-control-modern" rows="2">{{ ticket.notes or '' }}</textarea>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn-primary-modern">Save Changes</button>
+                <a href="{{ url_for('maintenance') }}" class="btn-secondary-modern">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -31,6 +31,10 @@ def home():
     conn = get_db_connection()
     cursor = conn.cursor()
 
+    overdue_amount = 0.0
+    collections_this_month = 0.0
+    occupancy_pct = 0.0
+
     if role == "admin":
         cursor.execute("SELECT COUNT(*) AS total_rooms FROM rooms")
         total_rooms = cursor.fetchone()["total_rooms"]
@@ -43,6 +47,20 @@ def home():
 
         cursor.execute("SELECT COUNT(*) AS pending FROM room_assignments WHERE status='pending'")
         pending = cursor.fetchone()["pending"]
+
+        cursor.execute(
+            "SELECT COALESCE(SUM(balance_due), 0) AS overdue_amount FROM invoices WHERE status = 'overdue'"
+        )
+        overdue_amount = float(cursor.fetchone()["overdue_amount"] or 0)
+
+        cursor.execute(
+            """
+            SELECT COALESCE(SUM(amount), 0) AS collections_this_month
+            FROM payments
+            WHERE strftime('%Y-%m', payment_date) = strftime('%Y-%m', 'now')
+            """
+        )
+        collections_this_month = float(cursor.fetchone()["collections_this_month"] or 0)
     elif role == "landlord":
         cursor.execute(
             "SELECT COUNT(*) AS total_buildings FROM buildings WHERE owner_id = ?",
@@ -76,8 +94,34 @@ def home():
             (user_id,),
         )
         pending = cursor.fetchone()["pending"]
+
+        cursor.execute(
+            """
+            SELECT COALESCE(SUM(i.balance_due), 0) AS overdue_amount
+            FROM invoices i
+            JOIN users u ON i.user_id = u.user_id
+            WHERE i.status = 'overdue' AND u.landlord_id = ?
+            """,
+            (user_id,),
+        )
+        overdue_amount = float(cursor.fetchone()["overdue_amount"] or 0)
+
+        cursor.execute(
+            """
+            SELECT COALESCE(SUM(p.amount), 0) AS collections_this_month
+            FROM payments p
+            JOIN users u ON p.user_id = u.user_id
+            WHERE u.landlord_id = ?
+              AND strftime('%Y-%m', p.payment_date) = strftime('%Y-%m', 'now')
+            """,
+            (user_id,),
+        )
+        collections_this_month = float(cursor.fetchone()["collections_this_month"] or 0)
     else:
         total_rooms = occupied = available = pending = None
+
+    if total_rooms:
+        occupancy_pct = round((occupied / total_rooms) * 100, 1)
 
     cursor.close()
     conn.close()
@@ -89,4 +133,7 @@ def home():
         occupied=occupied,
         available=available,
         pending=pending,
+        overdue_amount=overdue_amount,
+        collections_this_month=collections_this_month,
+        occupancy_pct=occupancy_pct,
     )

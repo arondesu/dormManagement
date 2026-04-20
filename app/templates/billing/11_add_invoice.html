@@ -1,0 +1,89 @@
+{% extends '_base.html' %}
+
+{% block title %}Add Invoice{% endblock %}
+
+{% block content %}
+<div class="container-modern">
+    <div class="page-header">
+        <h1 class="page-title">Add Invoice</h1>
+        <p class="page-subtitle">Create a new invoice for a tenant assignment</p>
+    </div>
+
+    <div class="card-modern card-pad-sm">
+        <form method="POST">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label-modern">Tenant</label>
+                    <select name="tenant_id" class="form-control-modern">
+                        <option value="">Select tenant</option>
+                        {% for tenant in tenants %}
+                            <option value="{{ tenant.tenant_id }}">{{ tenant.first_name }} {{ tenant.last_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label-modern">Assignment</label>
+                    <select name="assignment_id" class="form-control-modern">
+                        <option value="">Select assignment</option>
+                        {% for a in assignments %}
+                            <option value="{{ a.assignment_id }}">{{ a.building_name }} - Room {{ a.room_number }} ({{ a.first_name }} {{ a.last_name }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-modern">Invoice Number</label>
+                    <input type="text" name="invoice_number" class="form-control-modern" placeholder="Auto if empty">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-modern">Issue Date</label>
+                    <input type="date" name="issue_date" class="form-control-modern" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-modern">Due Date</label>
+                    <input type="date" name="due_date" class="form-control-modern" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-modern">Period Start</label>
+                    <input type="date" name="period_start" class="form-control-modern">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-modern">Period End</label>
+                    <input type="date" name="period_end" class="form-control-modern">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-modern">Status</label>
+                    <select name="status" class="form-control-modern">
+                        <option value="unpaid">Unpaid</option>
+                        <option value="draft">Draft</option>
+                        <option value="partial">Partial</option>
+                        <option value="paid">Paid</option>
+                        <option value="overdue">Overdue</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-modern">Subtotal</label>
+                    <input type="number" step="0.01" name="subtotal" value="0" class="form-control-modern" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-modern">Late Fee</label>
+                    <input type="number" step="0.01" name="late_fee" value="0" class="form-control-modern">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-modern">Amount Paid</label>
+                    <input type="number" step="0.01" name="amount_paid" value="0" class="form-control-modern">
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label-modern">Notes</label>
+                    <textarea name="notes" class="form-control-modern" rows="3"></textarea>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn-primary-modern">Save Invoice</button>
+                <a href="{{ url_for('invoices') }}" class="btn-secondary-modern">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

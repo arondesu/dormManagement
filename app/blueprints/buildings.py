@@ -99,7 +99,7 @@ def buildings():
         cursor.close()
         conn.close()
 
-    return render_template("03_buildings.html", buildings=buildings_list, search=search, status_filter=status_filter)
+    return render_template("buildings/03_buildings.html", buildings=buildings_list, search=search, status_filter=status_filter)
 
 
 @bp.route("/add_building", methods=["GET", "POST"])
@@ -153,7 +153,7 @@ def add_building():
                 conn.close()
             except Exception:
                 pass
-    return render_template("03_add_building.html", landlords=landlords)
+    return render_template("buildings/03_add_building.html", landlords=landlords)
 
 
 @bp.route("/edit_building/<int:building_id>", methods=["GET", "POST"])
@@ -229,4 +229,4 @@ def edit_building(building_id):
                 conn2.close()
             except Exception:
                 pass
-    return render_template("03_edit_building.html", building=building, landlords=landlords)
+    return render_template("buildings/03_edit_building.html", building=building, landlords=landlords)

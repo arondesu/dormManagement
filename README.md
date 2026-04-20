@@ -15,6 +15,7 @@ A modern, web-based dormitory management system built with Flask and SQLite. Des
 - [Technology Stack](#-technology-stack)
 - [Database Schema](#-database-schema)
 - [Installation](#-installation)
+- [Database Migrations](#-database-migrations)
 - [Usage](#-usage)
 - [Project Structure](#-project-structure)
 - [User Roles](#-user-roles)
@@ -22,6 +23,34 @@ A modern, web-based dormitory management system built with Flask and SQLite. Des
 - [Troubleshooting](#-troubleshooting)
 - [Contributing](#-contributing)
 - [License](#-license)
+
+---
+
+## 🗂️ Database Migrations
+
+This project now includes SQL-based migrations compatible with the current SQLite + raw SQL architecture.
+
+### Migration Files
+- Location: `migrations/`
+- Naming: `NNNN_description.sql` (example: `0001_initial_schema.sql`)
+
+### Commands (Windows PowerShell)
+
+```powershell
+cd "C:\Users\ADMIN\Documents\dormManagement"
+.\.venv\Scripts\python.exe migrate.py status
+.\.venv\Scripts\python.exe migrate.py up
+```
+
+Apply only up to a specific version:
+
+```powershell
+.\.venv\Scripts\python.exe migrate.py up --target 0001
+```
+
+### Startup Behavior
+- On app startup, pending migrations are applied automatically in `app/extensions.py`.
+- `db.init_db()` remains for backward compatibility during transition.
 
 ---
 

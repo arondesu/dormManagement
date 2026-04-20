@@ -32,7 +32,7 @@ def reports():
     finally:
         cursor.close()
         conn.close()
-    return render_template("08_reports.html", reports=reports_list)
+    return render_template("reports/08_reports.html", reports=reports_list)
 
 
 @bp.route("/export/payments")

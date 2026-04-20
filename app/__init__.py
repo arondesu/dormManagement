@@ -23,12 +23,20 @@ LEGACY_ENDPOINT_ALIASES = {
     "delete_building": "buildings.delete_building",
     "room_types": "rooms.room_types",
     "rooms": "rooms.rooms",
+    "beds": "beds.beds",
+    "add_bed": "beds.add_bed",
+    "edit_bed": "beds.edit_bed",
+    "delete_bed": "beds.delete_bed",
     "add_room": "rooms.add_room",
     "edit_room": "rooms.edit_room",
     "delete_room": "rooms.delete_room",
     "building_floors": "rooms.building_floors",
     "landlord_rooms": "rooms.landlord_rooms",
     "assignments": "assignments.assignments",
+    "tenants": "tenants.tenants",
+    "add_tenant": "tenants.add_tenant",
+    "edit_tenant": "tenants.edit_tenant",
+    "delete_tenant": "tenants.delete_tenant",
     "admin_assign_room": "assignments.admin_assign_room",
     "edit_assignment": "assignments.edit_assignment",
     "get_user_assignments": "assignments.get_user_assignments",
@@ -38,6 +46,14 @@ LEGACY_ENDPOINT_ALIASES = {
     "view_payment": "payments.view_payment",
     "edit_payment": "payments.edit_payment",
     "delete_payment": "payments.delete_payment",
+    "invoices": "billing.invoices",
+    "add_invoice": "billing.add_invoice",
+    "edit_invoice": "billing.edit_invoice",
+    "delete_invoice": "billing.delete_invoice",
+    "maintenance": "maintenance.maintenance",
+    "add_maintenance": "maintenance.add_maintenance",
+    "edit_maintenance": "maintenance.edit_maintenance",
+    "delete_maintenance": "maintenance.delete_maintenance",
     "reports": "reports.reports",
     "export_payments": "reports.export_payments",
     "export_assignments": "reports.export_assignments",
@@ -65,7 +81,7 @@ def _register_legacy_endpoint_aliases(app):
 def create_app():
     load_dotenv()
 
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder="../static")
     app.config.from_object(Config)
 
     init_app_data()

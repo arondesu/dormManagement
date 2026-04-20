@@ -101,7 +101,7 @@ def edit_room(room_id):
     cursor.close()
     conn.close()
 
-    return render_template("05_edit_rooms.html", room=room, room_types=room_types, floors=floors)
+    return render_template("rooms/05_edit_rooms.html", room=room, room_types=room_types, floors=floors)
 
 
 @bp.route("/delete_room/<int:room_id>", methods=["POST"])
@@ -221,7 +221,7 @@ def add_room():
 
     cursor.close()
     conn.close()
-    return render_template("05_add_room.html", buildings=buildings, room_types=room_types)
+    return render_template("rooms/05_add_room.html", buildings=buildings, room_types=room_types)
 
 
 @bp.route("/building_floors/<int:building_id>")
@@ -257,7 +257,7 @@ def room_types():
     finally:
         cursor.close()
         conn.close()
-    return render_template("04_room_types.html", room_types=types)
+    return render_template("rooms/04_room_types.html", room_types=types)
 
 
 @bp.route("/rooms")
@@ -317,7 +317,7 @@ def rooms():
         conn.close()
 
     return render_template(
-        "05_rooms.html",
+        "rooms/05_rooms.html",
         rooms=rooms_list,
         search=search,
         building_filter=building_filter,

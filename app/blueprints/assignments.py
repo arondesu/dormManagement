@@ -127,7 +127,7 @@ def edit_assignment(assignment_id):
     cursor.close()
     conn.close()
     return render_template(
-        "edit_assignment.html",
+        "assignments/edit_assignment.html",
         assignment=assignment,
         buildings=buildings,
         rooms=rooms,
@@ -246,7 +246,7 @@ def admin_assign_room():
     cursor.close()
     conn.close()
     return render_template(
-        "06_assign_room.html",
+        "assignments/06_assign_room.html",
         buildings=buildings,
         rooms=rooms,
         current_user={"user_id": session.get("user_id")},
@@ -313,7 +313,7 @@ def assignments():
     finally:
         cursor.close()
         conn.close()
-    return render_template("06_assignments.html", assignments=converted)
+    return render_template("assignments/06_assignments.html", assignments=converted)
 
 
 @bp.route("/api/assignments/<int:user_id>")

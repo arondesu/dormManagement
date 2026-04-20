@@ -49,6 +49,33 @@
         </div>
         
     </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card-modern dashboard-stat-card">
+                <div class="dashboard-stat-value text-info">
+                    {{ occupancy_pct }}%
+                </div>
+                <div class="dashboard-stat-label">Occupancy Rate</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card-modern dashboard-stat-card">
+                <div class="dashboard-stat-value text-danger">
+                    ₱{{ "{:,.2f}".format(overdue_amount or 0) }}
+                </div>
+                <div class="dashboard-stat-label">Overdue Balance</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card-modern dashboard-stat-card">
+                <div class="dashboard-stat-value text-success">
+                    ₱{{ "{:,.2f}".format(collections_this_month or 0) }}
+                </div>
+                <div class="dashboard-stat-label">Collections (This Month)</div>
+            </div>
+        </div>
+    </div>
     {% endif %}
 
     <!-- Module Cards -->

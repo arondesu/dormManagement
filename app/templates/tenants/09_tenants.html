@@ -1,0 +1,94 @@
+{% extends '_base.html' %}
+
+{% block title %}Tenants{% endblock %}
+
+{% block content %}
+<div class="container-modern">
+    <div class="page-header d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">Tenants</h1>
+            <p class="page-subtitle">Manage tenant profiles and status</p>
+        </div>
+        <a href="{{ url_for('add_tenant') }}" class="btn-primary-modern">Add Tenant</a>
+    </div>
+
+    <form method="GET" action="{{ url_for('tenants') }}" class="card-modern card-pad-sm mb-4">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <input type="text" name="search" value="{{ search }}" class="form-control-modern" placeholder="Search by name, username, or tenant code">
+            </div>
+            <div class="col-md-3">
+                <select name="status" class="form-control-modern">
+                    <option value="all" {% if not status_filter or status_filter == 'all' %}selected{% endif %}>All Status</option>
+                    <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+                    <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Inactive</option>
+                    <option value="blacklisted" {% if status_filter == 'blacklisted' %}selected{% endif %}>Blacklisted</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn-primary-modern">Filter</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="card-modern">
+        <table class="table-modern w-100">
+            <thead>
+                <tr>
+                    <th>Tenant</th>
+                    <th>Code</th>
+                    <th>Contact</th>
+                    <th>Room</th>
+                    <th>Status</th>
+                    <th class="table-action-header">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if tenants %}
+                    {% for tenant in tenants %}
+                    <tr>
+                        <td>
+                            <div class="text-strong-dark">{{ (tenant.first_name or '') ~ ' ' ~ (tenant.last_name or '') }}</div>
+                            <div class="text-sm text-muted-light">@{{ tenant.username or 'unlinked' }}</div>
+                        </td>
+                        <td>{{ tenant.tenant_code or '-' }}</td>
+                        <td>
+                            <div class="text-sm">{{ tenant.emergency_contact_name or '-' }}</div>
+                            <div class="text-sm text-muted-light">{{ tenant.emergency_contact_phone or '-' }}</div>
+                        </td>
+                        <td>
+                            <div class="text-sm">{{ tenant.building_name or '-' }}</div>
+                            <div class="text-sm text-muted-light">{{ tenant.room_number or '-' }}</div>
+                        </td>
+                        <td>
+                            {% if tenant.status == 'active' %}
+                                <span class="badge-modern badge-success">Active</span>
+                            {% elif tenant.status == 'inactive' %}
+                                <span class="badge-modern badge-warning">Inactive</span>
+                            {% else %}
+                                <span class="badge-modern badge-danger">Blacklisted</span>
+                            {% endif %}
+                        </td>
+                        <td class="table-action-cell">
+                            <div class="d-flex gap-2 justify-content-end">
+                                <a href="{{ url_for('edit_tenant', tenant_id=tenant.tenant_id) }}" class="btn-secondary-modern btn-compact">Edit</a>
+                                <form method="POST" action="{{ url_for('delete_tenant', tenant_id=tenant.tenant_id) }}" class="inline-form">
+                                    <button type="submit" class="btn-danger-modern btn-compact">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            <div class="empty-title">No tenants found</div>
+                            <div class="text-sm">Create tenant profiles to manage occupancy at the bed level.</div>
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

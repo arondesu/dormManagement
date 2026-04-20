@@ -29,9 +29,51 @@ function loadAssignments() {
         });
 }
 
+function loadInvoices() {
+    const userSelect = document.getElementById('student_select');
+    const invoiceSelect = document.getElementById('invoice_select');
+
+    if (!userSelect || !invoiceSelect) {
+        return;
+    }
+
+    const userId = userSelect.value;
+
+    if (!userId) {
+        invoiceSelect.innerHTML = '<option value="">Auto-allocate by due date</option>';
+        return;
+    }
+
+    fetch(`/api/invoices/user/${userId}`)
+        .then((response) => response.json())
+        .then((data) => {
+            invoiceSelect.innerHTML = '<option value="">Auto-allocate by due date</option>';
+
+            if (!data.invoices || !data.invoices.length) {
+                return;
+            }
+
+            data.invoices.forEach((invoice) => {
+                const option = document.createElement('option');
+                option.value = invoice.invoice_id;
+                option.textContent = `${invoice.invoice_number} | Due ${invoice.due_date} | Balance ₱${invoice.balance_due}`;
+                invoiceSelect.appendChild(option);
+            });
+        })
+        .catch(() => {
+            invoiceSelect.innerHTML = '<option value="">Error loading invoices</option>';
+        });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const userSelect = document.getElementById('student_select');
     if (userSelect) {
-        userSelect.addEventListener('change', loadAssignments);
+        const loadRelatedData = () => {
+            loadAssignments();
+            loadInvoices();
+        };
+
+        userSelect.addEventListener('change', loadRelatedData);
+        loadRelatedData();
     }
 });

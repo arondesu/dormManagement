@@ -53,7 +53,7 @@ def users():
         cursor.close()
         conn.close()
 
-    return render_template("02_users.html", users=users_list, search=search, role_filter=role_filter)
+    return render_template("users/02_users.html", users=users_list, search=search, role_filter=role_filter)
 
 
 @bp.route("/add_user", methods=["GET", "POST"])
@@ -174,7 +174,7 @@ def admin_add_user():
             cursor.close()
             conn.close()
 
-    return render_template("02_add_user.html")
+    return render_template("users/02_add_user.html")
 
 
 def send_confirmation_email(to_email, username):
@@ -284,7 +284,7 @@ def edit_user(user_id):
         cursor.close()
         conn.close()
 
-    return render_template("02_edit_user.html", user=user)
+    return render_template("users/02_edit_user.html", user=user)
 
 
 @bp.route("/delete_user/<int:user_id>", methods=["POST"])

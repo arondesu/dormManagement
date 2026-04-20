@@ -26,16 +26,24 @@
                     {% if session.get('user_id') %}
                         {% if session.get('role') == 'admin' %}
                             <a href="{{ url_for('users') }}" class="nav-link-modern">Users</a>
+                            <a href="{{ url_for('tenants') }}" class="nav-link-modern">Tenants</a>
                             <a href="{{ url_for('buildings') }}" class="nav-link-modern">Buildings</a>
                             <a href="{{ url_for('rooms') }}" class="nav-link-modern">Rooms</a>
+                            <a href="{{ url_for('beds') }}" class="nav-link-modern">Beds</a>
                             <a href="{{ url_for('assignments') }}" class="nav-link-modern">Assignments</a>
+                            <a href="{{ url_for('invoices') }}" class="nav-link-modern">Invoices</a>
                             <a href="{{ url_for('payments') }}" class="nav-link-modern">Payments</a>
+                            <a href="{{ url_for('maintenance') }}" class="nav-link-modern">Maintenance</a>
                             <a href="{{ url_for('reports') }}" class="nav-link-modern">Reports</a>
                         {% elif session.get('role') == 'landlord' %}
+                            <a href="{{ url_for('tenants') }}" class="nav-link-modern">Tenants</a>
                             <a href="{{ url_for('buildings') }}" class="nav-link-modern">Buildings</a>
                             <a href="{{ url_for('rooms') }}" class="nav-link-modern">Rooms</a>
+                            <a href="{{ url_for('beds') }}" class="nav-link-modern">Beds</a>
                             <a href="{{ url_for('assignments') }}" class="nav-link-modern">Assignments</a>
+                            <a href="{{ url_for('invoices') }}" class="nav-link-modern">Invoices</a>
                             <a href="{{ url_for('payments') }}" class="nav-link-modern">Payments</a>
+                            <a href="{{ url_for('maintenance') }}" class="nav-link-modern">Maintenance</a>
                         {% else %}
                             <a href="{{ url_for('rooms') }}" class="nav-link-modern">Rooms</a>
                             <a href="{{ url_for('assignments') }}" class="nav-link-modern">My Assignment</a>

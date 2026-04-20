@@ -1,0 +1,81 @@
+{% extends '_base.html' %}
+
+{% block title %}Beds{% endblock %}
+
+{% block content %}
+<div class="container-modern">
+    <div class="page-header d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">Beds</h1>
+            <p class="page-subtitle">Manage bed slots per room for occupancy tracking</p>
+        </div>
+        <a href="{{ url_for('add_bed') }}" class="btn-primary-modern">Add Bed</a>
+    </div>
+
+    <form method="GET" action="{{ url_for('beds') }}" class="card-modern card-pad-sm mb-4">
+        <div class="row g-3">
+            <div class="col-md-9">
+                <input type="text" name="search" value="{{ search }}" class="form-control-modern" placeholder="Search by bed label, room, or building">
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn-primary-modern">Filter</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="card-modern">
+        <table class="table-modern w-100">
+            <thead>
+                <tr>
+                    <th>Building</th>
+                    <th>Room</th>
+                    <th>Bed</th>
+                    <th>Occupant</th>
+                    <th>Status</th>
+                    <th class="table-action-header">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if beds %}
+                    {% for bed in beds %}
+                    <tr>
+                        <td>{{ bed.building_name }}</td>
+                        <td>{{ bed.room_number }}</td>
+                        <td>{{ bed.bed_label }}</td>
+                        <td>
+                            {% if bed.tenant_id %}
+                                {{ (bed.tenant_first_name or '') ~ ' ' ~ (bed.tenant_last_name or '') }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if bed.is_available %}
+                                <span class="badge-modern badge-success">Available</span>
+                            {% else %}
+                                <span class="badge-modern badge-warning">Occupied</span>
+                            {% endif %}
+                        </td>
+                        <td class="table-action-cell">
+                            <div class="d-flex gap-2 justify-content-end">
+                                <a href="{{ url_for('edit_bed', bed_id=bed.bed_id) }}" class="btn-secondary-modern btn-compact">Edit</a>
+                                <form method="POST" action="{{ url_for('delete_bed', bed_id=bed.bed_id) }}" class="inline-form">
+                                    <button type="submit" class="btn-danger-modern btn-compact">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            <div class="empty-title">No beds found</div>
+                            <div class="text-sm">Add beds to rooms to enable bed-level occupancy management.</div>
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

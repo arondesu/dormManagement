@@ -4,6 +4,8 @@ from datetime import datetime
 from flask import Blueprint, flash, redirect, render_template, request, session, url_for
 
 from db import get_db_connection
+from app.services.billing_service import allocate_payment_to_invoices, remove_payment_allocations
+from app.utils.audit import log_audit_event
 
 from .common import role_required
 
@@ -28,15 +30,17 @@ def payments():
 
     try:
         base_query = """
-            SELECT p.payment_id, u.username, u.first_name, u.last_name,
+                 SELECT p.payment_id, u.username, u.first_name, u.last_name,
                    p.amount, p.payment_method, p.payment_date,
                    p.receipt_number, p.payment_period_start, p.payment_period_end,
-                   p.notes, r.room_number, b.building_name, ra.monthly_rate
+                     p.notes, r.room_number, b.building_name, ra.monthly_rate,
+                     COALESCE(SUM(pa.allocated_amount), 0) AS allocated_amount
             FROM payments p
             LEFT JOIN users u ON p.user_id = u.user_id
             LEFT JOIN room_assignments ra ON p.assignment_id = ra.assignment_id
             LEFT JOIN rooms r ON ra.room_id = r.room_id
             LEFT JOIN buildings b ON r.building_id = b.building_id
+                 LEFT JOIN payment_allocations pa ON pa.payment_id = p.payment_id
         """
 
         where_clauses = []
@@ -67,7 +71,7 @@ def payments():
 
         if where_clauses:
             base_query += " WHERE " + " AND ".join(where_clauses)
-        base_query += " ORDER BY p.payment_date DESC, p.payment_id DESC"
+        base_query += " GROUP BY p.payment_id ORDER BY p.payment_date DESC, p.payment_id DESC"
 
         cursor.execute(base_query, params)
         payments_list = cursor.fetchall()
@@ -196,7 +200,7 @@ def payments():
         conn.close()
 
     return render_template(
-        "07_payments.html",
+        "payments/07_payments.html",
         payments=payments_list,
         students=students,
         buildings=buildings,
@@ -267,7 +271,7 @@ def payment(payment_id=None):
         cursor.close()
         conn.close()
 
-    return render_template("07_payment.html", users=users)
+    return render_template("payments/07_payment.html", users=users)
 
 
 @bp.route("/record_payment", methods=["POST"])
@@ -275,6 +279,7 @@ def payment(payment_id=None):
 def record_payment():
     user_id = request.form.get("user_id")
     assignment_id = request.form.get("assignment_id") or None
+    invoice_id = request.form.get("invoice_id") or None
     amount = request.form.get("amount")
     payment_method = request.form.get("payment_method")
     payment_date = request.form.get("payment_date")
@@ -314,6 +319,24 @@ def record_payment():
                 session.get("user_id"),
                 notes,
             ),
+        )
+
+        payment_id = cursor.lastrowid
+        allocations = allocate_payment_to_invoices(
+            connection=conn,
+            payment_id=payment_id,
+            user_id=user_id,
+            payment_amount=amount,
+            preferred_invoice_id=invoice_id,
+        )
+
+        log_audit_event(
+            conn,
+            actor_user_id=session.get("user_id"),
+            action="record",
+            entity_type="payment",
+            entity_id=payment_id,
+            details={"amount": amount, "allocations": allocations},
         )
 
         conn.commit()
@@ -365,7 +388,7 @@ def view_payment(payment_id):
             flash("You don't have permission to view this payment.", "danger")
             return redirect(url_for("payments"))
 
-        return render_template("view_payment.html", payment=payment_row)
+        return render_template("payments/view_payment.html", payment=payment_row)
 
     except Exception as error:
         flash(f"Error fetching payment: {error}", "danger")
@@ -388,6 +411,15 @@ def edit_payment(payment_id):
         notes = request.form.get("notes")
 
         try:
+            cursor.execute("SELECT user_id FROM payments WHERE payment_id = ?", (payment_id,))
+            row = cursor.fetchone()
+            if not row:
+                flash("Payment not found.", "warning")
+                return redirect(url_for("payments"))
+
+            user_id = row["user_id"]
+            remove_payment_allocations(conn, payment_id)
+
             cursor.execute(
                 """
                 UPDATE payments
@@ -396,6 +428,22 @@ def edit_payment(payment_id):
                 WHERE payment_id = ?
             """,
                 (amount, payment_method, payment_date, notes, payment_id),
+            )
+
+            allocations = allocate_payment_to_invoices(
+                connection=conn,
+                payment_id=payment_id,
+                user_id=user_id,
+                payment_amount=amount,
+            )
+
+            log_audit_event(
+                conn,
+                actor_user_id=session.get("user_id"),
+                action="update",
+                entity_type="payment",
+                entity_id=payment_id,
+                details={"amount": amount, "allocations": allocations},
             )
 
             conn.commit()
@@ -425,7 +473,7 @@ def edit_payment(payment_id):
             flash("Payment not found.", "warning")
             return redirect(url_for("payments"))
 
-        return render_template("edit_payment.html", payment=payment_row)
+        return render_template("payments/edit_payment.html", payment=payment_row)
 
     except Exception as error:
         flash(f"Error fetching payment: {error}", "danger")
@@ -442,7 +490,15 @@ def delete_payment(payment_id):
     cursor = conn.cursor()
 
     try:
+        remove_payment_allocations(conn, payment_id)
         cursor.execute("DELETE FROM payments WHERE payment_id = ?", (payment_id,))
+        log_audit_event(
+            conn,
+            actor_user_id=session.get("user_id"),
+            action="delete",
+            entity_type="payment",
+            entity_id=payment_id,
+        )
         conn.commit()
         flash("Payment deleted successfully!", "success")
     except Exception as error:
