@@ -49,7 +49,11 @@ def home():
         pending = cursor.fetchone()["pending"]
 
         cursor.execute(
-            "SELECT COALESCE(SUM(balance_due), 0) AS overdue_amount FROM invoices WHERE status = 'overdue'"
+            """
+            SELECT COALESCE(SUM(total_amount - amount_paid), 0) AS overdue_amount
+            FROM invoices
+            WHERE status = 'overdue'
+            """
         )
         overdue_amount = float(cursor.fetchone()["overdue_amount"] or 0)
 
@@ -97,10 +101,12 @@ def home():
 
         cursor.execute(
             """
-            SELECT COALESCE(SUM(i.balance_due), 0) AS overdue_amount
+            SELECT COALESCE(SUM(i.total_amount - i.amount_paid), 0) AS overdue_amount
             FROM invoices i
-            JOIN users u ON i.user_id = u.user_id
-            WHERE i.status = 'overdue' AND u.landlord_id = ?
+            LEFT JOIN room_assignments ra ON i.assignment_id = ra.assignment_id
+            LEFT JOIN rooms r ON ra.room_id = r.room_id
+            LEFT JOIN buildings b ON r.building_id = b.building_id
+            WHERE i.status = 'overdue' AND b.owner_id = ?
             """,
             (user_id,),
         )
@@ -110,8 +116,10 @@ def home():
             """
             SELECT COALESCE(SUM(p.amount), 0) AS collections_this_month
             FROM payments p
-            JOIN users u ON p.user_id = u.user_id
-            WHERE u.landlord_id = ?
+                        LEFT JOIN room_assignments ra ON p.assignment_id = ra.assignment_id
+                        LEFT JOIN rooms r ON ra.room_id = r.room_id
+                        LEFT JOIN buildings b ON r.building_id = b.building_id
+                        WHERE b.owner_id = ?
               AND strftime('%Y-%m', p.payment_date) = strftime('%Y-%m', 'now')
             """,
             (user_id,),
