@@ -1,0 +1,22 @@
+{% extends '_base.html' %}
+
+{% block title %}Roles{% endblock %}
+
+{% block content %}
+<div class="container-modern">
+    <div class="page-header d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="page-title">Roles</h1>
+            <p class="page-subtitle">Manage application roles defined in the ERD.</p>
+        </div>
+        <a href="#" class="btn-primary-modern">Add Role</a>
+    </div>
+
+    <div class="card-modern card-pad-lg">
+        <div class="empty-state">
+            <div class="empty-title">No role records available</div>
+            <div class="text-sm">Connect this template to your roles blueprint/query when ready.</div>
+        </div>
+    </div>
+</div>
+{% endblock %}
