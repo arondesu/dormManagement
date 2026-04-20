@@ -23,17 +23,16 @@
     </div>
 
    <form method="GET" action="{{ url_for('buildings') }}">
-        <div class="card-modern mb-4" style="padding: 1rem;">
+        <div class="card-modern card-pad-sm mb-4">
             <div class="row g-3">
                 <div class="col-md-7">
                     <div class="position-relative">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"
-                            style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%);">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" class="search-icon">
                             <circle cx="11" cy="11" r="8"/>
                             <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                         </svg>
-                        <input type="text" name="search" value="{{ search }}" class="form-control-modern" 
-                            placeholder="Search buildings by name or address..." style="padding-left: 2.5rem;">
+                        <input type="text" name="search" value="{{ search }}" class="form-control-modern search-input-padded" 
+                            placeholder="Search buildings by name or address...">
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -57,7 +56,7 @@
             <thead>
                 <tr>
                     <th>
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 0.5rem;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="align-middle me-2">
                             <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
                             <line x1="9" y1="3" x2="9" y2="21"/>
                         </svg>
@@ -67,7 +66,7 @@
                     <th>Owner</th>
                     <th>Floors</th>
                     <th>Status</th>
-                    <th style="text-align: right;">Actions</th>
+                    <th class="table-action-header">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -75,20 +74,20 @@
                     {% for building in buildings %}
                     <tr>
                         <td>
-                            <div style="font-weight: 600; color: var(--gray-900);">{{ building.building_name }}</div>
+                            <div class="text-strong-dark">{{ building.building_name }}</div>
                         </td>
                         <td>
-                            <div style="font-size: 0.875rem; color: var(--gray-600);">{{ building.address }}</div>
+                            <div class="text-muted-sm">{{ building.address }}</div>
                         </td>
                         <td>
                             {% if building.owner_username %}
-                                <span style="font-size: 0.875rem;">{{ building.owner_username }}</span>
+                                <span class="text-sm">{{ building.owner_username }}</span>
                             {% else %}
-                                <span style="font-size: 0.875rem; color: var(--gray-400);">Unassigned</span>
+                                <span class="text-sm text-muted-light">Unassigned</span>
                             {% endif %}
                         </td>
                         <td>
-                            <span style="font-size: 0.875rem;">{{ building.total_floors }} floors</span>
+                            <span class="text-sm">{{ building.total_floors }} floors</span>
                         </td>
                         <td>
                             {% if building.is_active %}
@@ -97,18 +96,17 @@
                                 <span class="badge-modern badge-danger">Inactive</span>
                             {% endif %}
                         </td>
-                        <td style="text-align: right;">
+                        <td class="table-action-cell">
                             <div class="d-flex gap-2 justify-content-end">
                                 {% if session.get('role') == 'admin' or (session.get('role') == 'landlord' and building.owner_id == session.get('user_id')) %}
-                                <a href="{{ url_for('edit_building', building_id=building.building_id) }}" class="btn-secondary-modern" style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">
+                                <a href="{{ url_for('edit_building', building_id=building.building_id) }}" class="btn-secondary-modern btn-compact">
                                     Edit
                                 </a>
                 
                                 
-                                 <form method="POST" action="{{ url_for('delete_building', building_id=building.building_id) }}"
-                                    onsubmit="return confirm('Are you sure you want to delete this building?');">
+                                 <form method="POST" action="{{ url_for('delete_building', building_id=building.building_id) }}" data-confirm-message="Are you sure you want to delete this building?">
                                     <button type="submit" class="btn-danger-modern" 
-                                            style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">
+                                            class="btn-danger-modern btn-compact">
                                         Delete
                                     </button>
                                 </form>
@@ -119,13 +117,13 @@
                     {% endfor %}
                 {% else %}
                     <tr>
-                        <td colspan="6" style="text-align: center; padding: 3rem; color: var(--gray-600);">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 1rem; display: block; opacity: 0.3;">
+                        <td colspan="6" class="empty-state">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="empty-icon">
                                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
                                 <line x1="9" y1="3" x2="9" y2="21"/>
                             </svg>
-                            <div style="font-weight: 600; margin-bottom: 0.5rem;">No buildings found</div>
-                            <div style="font-size: 0.875rem;">Add your first building to get started</div>
+                            <div class="empty-title">No buildings found</div>
+                            <div class="text-sm">Add your first building to get started</div>
                         </td>
                     </tr>
                 {% endif %}

@@ -8,7 +8,7 @@
         <div class="col-lg-6">
             <div class="card-modern">
                 <div class="card-header-modern">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 0.5rem;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="align-middle me-2">
                         <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
                         <line x1="1" y1="10" x2="23" y2="10"/>
                     </svg>
@@ -31,8 +31,8 @@
                         <div class="form-group mb-3">
                             <label class="form-label-modern">Amount (₱)</label>
                             <div class="position-relative">
-                                <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--gray-600); font-weight: 600;">₱</span>
-                                <input type="number" name="amount" class="form-control-modern" step="0.01" min="0" placeholder="0.00" style="padding-left: 2rem;" required>
+                                <span class="money-prefix">₱</span>
+                                <input type="number" name="amount" class="form-control-modern input-with-prefix" step="0.01" min="0" placeholder="0.00" required>
                             </div>
                         </div>
 
@@ -55,7 +55,7 @@
                         <div class="form-group mb-4">
                             <label class="form-label-modern">Receipt Number</label>
                             <input type="text" name="receipt_number" class="form-control-modern" placeholder="e.g., RCPT-001" required>
-                            <small style="color: var(--gray-600); font-size: 0.8125rem; display: block; margin-top: 0.25rem;">
+                            <small class="text-secondary small d-block mt-1">
                                 Must be unique for each payment
                             </small>
                         </div>

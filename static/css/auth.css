@@ -1,0 +1,221 @@
+body.auth-page {
+    --primary-blue: #2563eb;
+    --primary-blue-dark: #1e40af;
+    --background: #ffffff;
+    --background-alt: #f8fafc;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --border: #e2e8f0;
+
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-image: url('/static/images/logIn.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    display: flex;
+}
+
+.auth-page * {
+    box-sizing: border-box;
+}
+
+.auth-page .logo {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.auth-page .logo-text {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+    letter-spacing: -0.025em;
+}
+
+.auth-page .logo-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.auth-page .form-group {
+    margin-bottom: 1.25rem;
+}
+
+.auth-page.login-page .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.auth-page .form-label {
+    display: block;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.auth-page .form-control,
+.auth-page .form-select {
+    width: 100%;
+    padding: 0.625rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+}
+
+.auth-page.login-page .form-control {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+}
+
+.auth-page .form-control:focus,
+.auth-page .form-select:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.auth-page .btn-primary {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--primary-blue);
+    border: none;
+    border-radius: 0.5rem;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.auth-page.register-page .btn-primary {
+    margin-top: 0.5rem;
+}
+
+.auth-page .btn-primary:hover {
+    background: var(--primary-blue-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.auth-page .alert {
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+}
+
+.auth-page .alert-danger {
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+}
+
+.auth-page .alert-success {
+    background: #dcfce7;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+}
+
+/* Login page */
+.auth-page.login-page .login-container {
+    width: 100%;
+    max-width: 400px;
+    margin: auto;
+    padding: 2rem;
+}
+
+.auth-page.login-page .login-card {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 1rem;
+    padding: 3rem 2.5rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+}
+
+.auth-page.login-page .register-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.auth-page.login-page .register-link a {
+    color: var(--primary-blue);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-page.login-page .register-link a:hover {
+    text-decoration: underline;
+}
+
+/* Register page */
+.auth-page.register-page {
+    align-items: center;
+}
+
+.auth-page.register-page .register-container {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.auth-page.register-page .register-card {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 1rem;
+    padding: 3rem 2.5rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+}
+
+.auth-page.register-page .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.auth-page.register-page .login-link {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.auth-page.register-page .login-link a {
+    color: var(--primary-blue);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-page.register-page .login-link a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 576px) {
+    .auth-page.register-page .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .auth-page.register-page .register-container {
+        padding: 0 1rem;
+    }
+
+    .auth-page.register-page .register-card {
+        padding: 2rem 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .auth-page.login-page .login-container {
+        padding: 1rem;
+    }
+
+    .auth-page.login-page .login-card {
+        padding: 2rem 1.5rem;
+    }
+}

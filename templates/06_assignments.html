@@ -36,15 +36,15 @@
     </div>
 
     <!-- Search Bar -->
-    <div class="card-modern mb-4" style="padding: 1rem;">
+    <div class="card-modern card-pad-sm mb-4">
         <div class="row g-3">
             <div class="col-md-8">
                 <div class="position-relative">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%);">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" class="search-icon">
                         <circle cx="11" cy="11" r="8"/>
                         <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                     </svg>
-                    <input type="text" class="form-control-modern" placeholder="Search by tenant or room..." style="padding-left: 2.5rem;">
+                    <input type="text" class="form-control-modern search-input-padded" placeholder="Search by tenant or room...">
                 </div>
             </div>
             <div class="col-md-4">
@@ -70,7 +70,7 @@
                     <th>End Period</th>
                     <th>Monthly Rate</th>
                     <th>Status</th>
-                    <th style="text-align: right;">Actions</th>
+                    <th class="table-action-header">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -78,36 +78,35 @@
                     {% for assign in assignments %}
                     <tr>
                         <td>
-                            <div style="font-weight: 600; color: var(--gray-900);">{{ assign.first_name }} {{ assign.last_name }}</div>
-                            <div style="font-size: 0.875rem; color: var(--gray-600);">ID: {{ assign.assignment_id }}</div>
+                            <div class="text-strong-dark">{{ assign.first_name }} {{ assign.last_name }}</div>
+                            <div class="text-muted-sm">ID: {{ assign.assignment_id }}</div>
                         </td>
                         <td>
-                            <span style="font-weight: 500;">{{ assign.room_number }}</span>
+                            <span class="fw-medium">{{ assign.room_number }}</span>
                         </td>
                         <td>
-                            <span style="font-size: 0.875rem;">{{ assign.building_name or '-' }}</span>
+                            <span class="text-sm">{{ assign.building_name or '-' }}</span>
                         </td>
                         <td>
-                            <span style="font-size: 0.875rem;">{{ assign.start_date or '-' }}</span>
+                            <span class="text-sm">{{ assign.start_date or '-' }}</span>
                         </td>
                         <td>
-                            <span style="font-size: 0.875rem;">{{ assign.end_date or '-' }}</span>
+                            <span class="text-sm">{{ assign.end_date or '-' }}</span>
                         </td>
         
                         <td>
-                            <span style="font-weight: 600; color: var(--primary);">₱{{ "%.2f"|format(assign.monthly_rate) }}</span>
+                            <span class="fw-semibold text-primary">₱{{ "%.2f"|format(assign.monthly_rate) }}</span>
                         </td>
                         <td>
                             <span class="badge-modern badge-info">{{ assign.status }}</span>
                         </td>
-                        <td style="text-align: right;">
+                        <td class="table-action-cell">
                             <div class="d-flex gap-2 justify-content-end">
                                 
                                 {% if session.get('role') in ['admin', 'landlord'] %}
                                
                                 <a href="{{ url_for('edit_assignment', assignment_id=assign.assignment_id) }}" 
-                                class="btn-secondary-modern" 
-                                style="padding: 0.375rem 0.75rem; font-size: 0.875rem;">
+                                class="btn-secondary-modern btn-compact">
                                     Edit
                                 </a>
                                 {% endif %}
@@ -117,13 +116,13 @@
                     {% endfor %}
                 {% else %}
                     <tr>
-                        <td colspan="7" style="text-align: center; padding: 3rem; color: var(--gray-600);">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 1rem; display: block; opacity: 0.3;">
+                        <td colspan="7" class="empty-state">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="empty-icon">
                                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                                 <polyline points="14 2 14 8 20 8"/>
                             </svg>
-                            <div style="font-weight: 600; margin-bottom: 0.5rem;">No assignments found</div>
-                            <div style="font-size: 0.875rem;">Assignments will appear here once tenants are assigned to rooms</div>
+                            <div class="empty-title">No assignments found</div>
+                            <div class="text-sm">Assignments will appear here once tenants are assigned to rooms</div>
                         </td>
                     </tr>
                 {% endif %}

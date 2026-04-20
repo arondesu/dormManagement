@@ -8,7 +8,7 @@
         <div class="col-lg-6">
             <div class="card-modern">
                 <div class="card-header-modern">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 0.5rem;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="align-middle me-2">
                         <rect x="3" y="9" width="18" height="13" rx="2" ry="2"/>
                         <path d="M9 22V12h6v10"/>
                     </svg>
@@ -59,24 +59,8 @@
     </div>
 </div>
 
-<script>
-document.getElementById('building_id').addEventListener('change', function() {
-    const buildingId = this.value;
-    const floorSelect = document.getElementById('floor_number');
-    floorSelect.innerHTML = '<option value="">Select Floor</option>';
+{% endblock %}
 
-    if (buildingId) {
-        fetch(`/building_floors/${buildingId}`)
-            .then(res => res.json())
-            .then(floors => {
-                floors.forEach(floor => {
-                    const opt = document.createElement('option');
-                    opt.value = floor;
-                    opt.text = `Floor ${floor}`;
-                    floorSelect.appendChild(opt);
-                });
-            });
-    }
-});
-</script>
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/add_room.js') }}"></script>
 {% endblock %}

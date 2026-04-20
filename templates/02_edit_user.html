@@ -9,7 +9,7 @@
             {% if user %}
             <div class="card-modern">
                 <div class="card-header-modern">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 0.5rem;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="align-middle me-2">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                     </svg>
@@ -19,8 +19,8 @@
                     <form method="POST">
                         <div class="form-group mb-3">
                             <label class="form-label-modern">Username</label>
-                            <input type="text" class="form-control-modern" value="{{ user.username }}" disabled style="background: var(--gray-100); cursor: not-allowed;">
-                            <small style="color: var(--gray-600); font-size: 0.8125rem; display: block; margin-top: 0.25rem;">
+                            <input type="text" class="form-control-modern bg-light" value="{{ user.username }}" disabled>
+                            <small class="text-secondary small d-block mt-1">
                                 Username cannot be changed
                             </small>
                         </div>
@@ -39,7 +39,7 @@
                         <div class="form-group mb-3">
                             <label class="form-label-modern">Password</label>
                             <input type="password" name="password" class="form-control-modern" autocomplete="new-password" placeholder="Leave blank to keep current password">
-                            <small style="color: var(--gray-600); font-size: 0.8125rem; display: block; margin-top: 0.25rem;">
+                            <small class="text-secondary small d-block mt-1">
                                 Leave blank to keep current password. Minimum 8 characters if changing.
                             </small>
                         </div>
@@ -92,7 +92,7 @@
             </div>
             {% else %}
             <div class="alert-modern alert-danger">
-                User not found. <a href="{{ url_for('users') }}" style="color: inherit; text-decoration: underline;">Back to Users</a>
+                User not found. <a href="{{ url_for('users') }}" class="text-reset text-decoration-underline">Back to Users</a>
             </div>
             {% endif %}
         </div>

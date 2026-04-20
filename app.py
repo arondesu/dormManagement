@@ -16,11 +16,6 @@ db.init_db()
 seed_data.seed_database()  # Ensure database is seeded on startup
 load_dotenv()
 
-######################################3
-
-
-
-
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev_secret_key_please_change")
 

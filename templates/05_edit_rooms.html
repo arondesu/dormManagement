@@ -9,7 +9,7 @@
             {% if room %}
             <div class="card-modern">
                 <div class="card-header-modern">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 0.5rem;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="align-middle me-2">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                     </svg>
@@ -19,8 +19,8 @@
                     <form method="POST">
                         <div class="form-group mb-3">
                             <label class="form-label-modern">Building</label>
-                            <input type="text" class="form-control-modern" value="{{ room.building_name }}" disabled style="background: var(--gray-100); cursor: not-allowed;">
-                            <small style="color: var(--gray-600); font-size: 0.8125rem; display: block; margin-top: 0.25rem;">
+                            <input type="text" class="form-control-modern bg-light" value="{{ room.building_name }}" disabled>
+                            <small class="text-secondary small d-block mt-1">
                                 Building cannot be changed
                             </small>
                         </div>
@@ -68,7 +68,7 @@
             </div>
             {% else %}
             <div class="alert-modern alert-danger">
-                Room not found. <a href="{{ url_for('rooms') }}" style="color: inherit; text-decoration: underline;">Back to Rooms</a>
+                Room not found. <a href="{{ url_for('rooms') }}" class="text-reset text-decoration-underline">Back to Rooms</a>
             </div>
             {% endif %}
         </div>

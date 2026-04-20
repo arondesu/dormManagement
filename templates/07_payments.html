@@ -7,14 +7,14 @@
     <!-- Header Section -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2 style="font-size: 1.875rem; font-weight: 700; color: var(--gray-900); margin: 0;">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 0.5rem;">
+            <h2 class="section-title">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="align-middle me-2">
                     <rect x="2" y="5" width="20" height="14" rx="2"/>
                     <line x1="2" y1="10" x2="22" y2="10"/>
                 </svg>
                 Payments
             </h2>
-            <p style="color: var(--gray-600); margin: 0.25rem 0 0 0; font-size: 0.875rem;">
+            <p class="section-subtitle">
                 {% if session.role == 'admin' %}
                 Manage all payment records and transactions
                 {% elif session.role == 'landlord' %}
@@ -26,7 +26,7 @@
         </div>
         {% if session.role in ['admin', 'landlord'] %}
         <button class="btn-primary-modern" data-bs-toggle="modal" data-bs-target="#recordPaymentModal">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.25rem;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1">
                 <line x1="12" y1="5" x2="12" y2="19"/>
                 <line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
@@ -39,65 +39,65 @@
     <div class="row g-3 mb-4">
         {% if session.role == 'admin' %}
         <div class="col-md-3">
-            <div class="card-modern" style="padding: 1.25rem;">
-                <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.5rem;">Total Collected</div>
-                <div style="font-size: 1.75rem; font-weight: 700; color: var(--success);">₱{{ "{:,.2f}".format(stats.total_collected or 0) }}</div>
+            <div class="card-modern card-pad-md">
+                <div class="text-muted-sm mb-2">Total Collected</div>
+                <div class="fs-3 fw-bold text-success">₱{{ "{:,.2f}".format(stats.total_collected or 0) }}</div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card-modern" style="padding: 1.25rem;">
-                <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.5rem;">This Month</div>
-                <div style="font-size: 1.75rem; font-weight: 700; color: var(--primary);">₱{{ "{:,.2f}".format(stats.month_collected or 0) }}</div>
+            <div class="card-modern card-pad-md">
+                <div class="text-muted-sm mb-2">This Month</div>
+                <div class="fs-3 fw-bold text-primary">₱{{ "{:,.2f}".format(stats.month_collected or 0) }}</div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card-modern" style="padding: 1.25rem;">
-                <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.5rem;">Total Payments</div>
-                <div style="font-size: 1.75rem; font-weight: 700; color: var(--gray-900);">{{ stats.payment_count or 0 }}</div>
+            <div class="card-modern card-pad-md">
+                <div class="text-muted-sm mb-2">Total Payments</div>
+                <div class="fs-3 fw-bold text-dark">{{ stats.payment_count or 0 }}</div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card-modern" style="padding: 1.25rem;">
-                <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.5rem;">Average Payment</div>
-                <div style="font-size: 1.75rem; font-weight: 700; color: var(--gray-700);">₱{{ "{:,.2f}".format(stats.avg_payment or 0) }}</div>
+            <div class="card-modern card-pad-md">
+                <div class="text-muted-sm mb-2">Average Payment</div>
+                <div class="fs-3 fw-bold text-secondary">₱{{ "{:,.2f}".format(stats.avg_payment or 0) }}</div>
             </div>
         </div>
         {% elif session.role == 'landlord' %}
         <div class="col-md-4">
-            <div class="card-modern" style="padding: 1.25rem;">
-                <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.5rem;">Total Collections</div>
-                <div style="font-size: 1.75rem; font-weight: 700; color: var(--success);">₱{{ "{:,.2f}".format(stats.total_collected or 0) }}</div>
+            <div class="card-modern card-pad-md">
+                <div class="text-muted-sm mb-2">Total Collections</div>
+                <div class="fs-3 fw-bold text-success">₱{{ "{:,.2f}".format(stats.total_collected or 0) }}</div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card-modern" style="padding: 1.25rem;">
-                <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.5rem;">This Month</div>
-                <div style="font-size: 1.75rem; font-weight: 700; color: var(--primary);">₱{{ "{:,.2f}".format(stats.month_collected or 0) }}</div>
+            <div class="card-modern card-pad-md">
+                <div class="text-muted-sm mb-2">This Month</div>
+                <div class="fs-3 fw-bold text-primary">₱{{ "{:,.2f}".format(stats.month_collected or 0) }}</div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card-modern" style="padding: 1.25rem;">
-                <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.5rem;">Transactions</div>
-                <div style="font-size: 1.75rem; font-weight: 700; color: var(--gray-900);">{{ stats.payment_count or 0 }}</div>
+            <div class="card-modern card-pad-md">
+                <div class="text-muted-sm mb-2">Transactions</div>
+                <div class="fs-3 fw-bold text-dark">{{ stats.payment_count or 0 }}</div>
             </div>
         </div>
         {% else %}
         <div class="col-md-4">
-            <div class="card-modern" style="padding: 1.25rem;">
-                <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.5rem;">Total Paid</div>
-                <div style="font-size: 1.75rem; font-weight: 700; color: var(--success);">₱{{ "{:,.2f}".format(stats.total_paid or 0) }}</div>
+            <div class="card-modern card-pad-md">
+                <div class="text-muted-sm mb-2">Total Paid</div>
+                <div class="fs-3 fw-bold text-success">₱{{ "{:,.2f}".format(stats.total_paid or 0) }}</div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card-modern" style="padding: 1.25rem;">
-                <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.5rem;">Current Balance</div>
-                <div style="font-size: 1.75rem; font-weight: 700; color: var(--warning);">₱{{ "{:,.2f}".format(stats.balance or 0) }}</div>
+            <div class="card-modern card-pad-md">
+                <div class="text-muted-sm mb-2">Current Balance</div>
+                <div class="fs-3 fw-bold text-warning">₱{{ "{:,.2f}".format(stats.balance or 0) }}</div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card-modern" style="padding: 1.25rem;">
-                <div style="font-size: 0.875rem; color: var(--gray-600); margin-bottom: 0.5rem;">Next Due</div>
-                <div style="font-size: 1.125rem; font-weight: 600; color: var(--gray-900); margin-top: 0.75rem;">{{ stats.next_due or 'N/A' }}</div>
+            <div class="card-modern card-pad-md">
+                <div class="text-muted-sm mb-2">Next Due</div>
+                <div class="fs-5 fw-semibold text-dark mt-3">{{ stats.next_due or 'N/A' }}</div>
             </div>
         </div>
         {% endif %}
@@ -105,7 +105,7 @@
 
     <!-- Filters Section -->
     {% if session.role in ['admin', 'landlord'] %}
-    <div class="card-modern mb-4" style="padding: 1.25rem;">
+    <div class="card-modern card-pad-md mb-4">
         <form method="GET" action="{{ url_for('payments') }}" class="row g-3 align-items-end">
             <div class="col-md-3">
                 <label class="form-label-modern">Student</label>
@@ -163,7 +163,7 @@
             <span>Payment Records</span>
             {% if session.role in ['admin', 'landlord'] %}
             <a href="{{ url_for('export_payments') }}" class="btn-secondary-modern btn-sm">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 0.25rem;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="me-1">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
                     <polyline points="7 10 12 15 17 10"/>
                     <line x1="12" y1="15" x2="12" y2="3"/>
@@ -198,7 +198,7 @@
                             {% if session.role in ['admin', 'landlord'] %}
                             <td>{{ payment.first_name }} {{ payment.last_name }}</td>
                             {% endif %}
-                            <td style="font-weight: 600; color: var(--success);">₱{{ "{:,.2f}".format(payment.amount) }}</td>
+                            <td class="fw-semibold text-success">₱{{ "{:,.2f}".format(payment.amount) }}</td>
                             <td>
                                 <span class="badge-secondary-modern">
                                     {% if payment.payment_method == 'cash' %}Cash
@@ -215,14 +215,14 @@
                                 {% if payment.payment_period_start and payment.payment_period_end %}
                                 {{ payment.payment_period_start }} to {{ payment.payment_period_end }}
                                 {% else %}
-                                <span style="color: var(--gray-400);">Not specified</span>
+                                <span class="text-muted-light">Not specified</span>
                                 {% endif %}
                             </td>
                             <td>
                                 {% if payment.room_number and payment.building_name %}
                                 {{ payment.building_name }} - {{ payment.room_number }}
                                 {% else %}
-                                <span style="color: var(--gray-400);">N/A</span>
+                                <span class="text-muted-light">N/A</span>
                                 {% endif %}
                             </td>
                             {% endif %}
@@ -241,7 +241,7 @@
                                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                                         </svg>
                                     </a>
-                                    <form method="POST" action="{{ url_for('delete_payment', payment_id=payment.payment_id) }}" style="display: inline;" onsubmit="return confirm('Delete this payment record?');">
+                                    <form method="POST" action="{{ url_for('delete_payment', payment_id=payment.payment_id) }}" class="inline-form" data-confirm-message="Delete this payment record?">
                                         <button type="submit" class="btn-action-modern btn-action-danger" title="Delete">
                                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                 <polyline points="3 6 5 6 21 6"/>
@@ -256,13 +256,13 @@
                         {% endfor %}
                     {% else %}
                         <tr>
-                            <td colspan="8" class="text-center" style="padding: 3rem; color: var(--gray-500);">
-                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 1rem; display: block; opacity: 0.5;">
+                            <td colspan="8" class="text-center py-5 text-secondary">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="empty-icon empty-icon-50">
                                     <rect x="2" y="5" width="20" height="14" rx="2"/>
                                     <line x1="2" y1="10" x2="22" y2="10"/>
                                 </svg>
-                                <div style="font-weight: 600; margin-bottom: 0.5rem;">No payment records found</div>
-                                <div style="font-size: 0.875rem;">
+                                <div class="empty-title">No payment records found</div>
+                                <div class="text-sm">
                                     {% if session.role in ['admin', 'landlord'] %}
                                     Click "Record Payment" to add your first payment
                                     {% else %}
@@ -292,7 +292,7 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label-modern">Student *</label>
-                            <select name="user_id" id="student_select" class="form-control-modern" required onchange="loadAssignments()">
+                            <select name="user_id" id="student_select" class="form-control-modern" required>
                                 <option value="">Select Student</option>
                                 {% for student in students %}
                                 <option value="{{ student.user_id }}">{{ student.first_name }} {{ student.last_name }}</option>
@@ -353,39 +353,8 @@
 </div>
 {% endif %}
 
-<script>
-function loadAssignments() {
-    const userId = document.getElementById('student_select').value;
-    const assignmentSelect = document.getElementById('assignment_select');
-    
-    if (!userId) {
-        assignmentSelect.innerHTML = '<option value="">Select student first</option>';
-        return;
-    }
-    
-    fetch(`/api/assignments/${userId}`)
-        .then(response => response.json())
-        .then(data => {
-            assignmentSelect.innerHTML = '<option value="">No assignment (general payment)</option>';
-            data.assignments.forEach(assignment => {
-                const option = document.createElement('option');
-                option.value = assignment.assignment_id;
-                option.textContent = `${assignment.building_name} - Room ${assignment.room_number} (₱${assignment.monthly_rate})`;
-                assignmentSelect.appendChild(option);
-            });
-        })
-        .catch(error => {
-            console.error('Error loading assignments:', error);
-            assignmentSelect.innerHTML = '<option value="">Error loading assignments</option>';
-        });
-}
+{% endblock %}
 
-function viewPayment(paymentId) {
-    window.location.href = `/payment/${paymentId}/view`;
-}
-
-function editPayment(paymentId) {
-    window.location.href = `/payment/${paymentId}/edit`;
-}
-</script>
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/payments.js') }}"></script>
 {% endblock %}
