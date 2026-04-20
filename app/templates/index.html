@@ -2,240 +2,63 @@
 
 {% block content %}
 <div class="container-modern">
-    <!-- Hero Section -->
-    <div class="text-center py-5 mb-5 hero-banner">
-        <h1 class="hero-title">
-            Welcome to Accommo
-        </h1>
-        <p class="hero-subtitle">
+    <div class="hero-banner mb-4">
+        <h1 class="hero-title mb-2">Dormitory Operations Dashboard</h1>
+        <p class="hero-subtitle mb-0">
             {% if role == 'admin' %}
-                Complete system management and oversight
+                Centralized control for occupancy, billing, and resident management.
             {% elif role == 'landlord' %}
-                Manage your properties and tenants
+                Monitor your properties, assignments, and payment performance.
             {% elif role == 'student' %}
-                Your dormitory information and payments
+                View your room assignment and payment activity in one place.
             {% else %}
-                Modern dormitory management system
+                Manage dormitory operations from a unified workspace.
             {% endif %}
         </p>
     </div>
 
-    <!-- Quick Stats (Admin / Landlord) -->
     {% if role in ['admin', 'landlord'] %}
-    <div class="row g-4 mb-5">
-        <div class="col-md-4">
-            <div class="card-modern dashboard-stat-card">
-                <div class="dashboard-stat-value text-primary">
-                    {{ total_rooms }}
-                </div>
-                <div class="dashboard-stat-label">Total Rooms</div>
-            </div>
+    <div class="dashboard-kpi-grid mb-4">
+        <div class="kpi-card">
+            <div class="kpi-label">Total Rooms</div>
+            <div class="kpi-value">{{ total_rooms }}</div>
         </div>
-        <div class="col-md-4">
-            <div class="card-modern dashboard-stat-card">
-                <div class="dashboard-stat-value text-success">
-                    {{ occupied }}
-                </div>
-                <div class="dashboard-stat-label">Occupied</div>
-            </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Occupied</div>
+            <div class="kpi-value text-success">{{ occupied }}</div>
         </div>
-        <div class="col-md-4">
-            <div class="card-modern dashboard-stat-card">
-                <div class="dashboard-stat-value text-warning">
-                    {{ available }}
-                </div>
-                <div class="dashboard-stat-label">Available</div>
-            </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Available</div>
+            <div class="kpi-value text-warning">{{ available }}</div>
         </div>
-        
+        <div class="kpi-card">
+            <div class="kpi-label">Occupancy Rate</div>
+            <div class="kpi-value text-info">{{ occupancy_pct }}%</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Overdue Balance</div>
+            <div class="kpi-value text-danger">₱{{ "{:,.2f}".format(overdue_amount or 0) }}</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Collections (This Month)</div>
+            <div class="kpi-value text-success">₱{{ "{:,.2f}".format(collections_this_month or 0) }}</div>
+        </div>
     </div>
 
-    <div class="row g-4 mb-5">
-        <div class="col-md-4">
-            <div class="card-modern dashboard-stat-card">
-                <div class="dashboard-stat-value text-info">
-                    {{ occupancy_pct }}%
-                </div>
-                <div class="dashboard-stat-label">Occupancy Rate</div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card-modern dashboard-stat-card">
-                <div class="dashboard-stat-value text-danger">
-                    ₱{{ "{:,.2f}".format(overdue_amount or 0) }}
-                </div>
-                <div class="dashboard-stat-label">Overdue Balance</div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card-modern dashboard-stat-card">
-                <div class="dashboard-stat-value text-success">
-                    ₱{{ "{:,.2f}".format(collections_this_month or 0) }}
-                </div>
-                <div class="dashboard-stat-label">Collections (This Month)</div>
-            </div>
-        </div>
+    <div class="analytics-panel mb-4">
+        <h3 class="analytics-panel-title">Operations Snapshot</h3>
+        <p class="analytics-panel-subtitle">
+            Current availability is <strong>{{ available }}</strong> room(s), with <strong>{{ occupied }}</strong> occupied and pending assignment count at <strong>{{ pending }}</strong>.
+        </p>
     </div>
     {% endif %}
 
-    <!-- Module Cards -->
-    {% if role == 'admin' %}
-    <div class="row g-4">
-        <div class="col-md-6 col-lg-4">
-            <a href="{{ url_for('users') }}" class="module-link">
-                <div class="card-modern module-card">
-                    <div class="module-icon-wrap">
-                        <svg width="24" height="24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
-                    </div>
-                    <h3 class="module-title">Users</h3>
-                    <p class="module-subtitle">Manage students, landlords, and admins</p>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-6 col-lg-4">
-            <a href="{{ url_for('buildings') }}" class="module-link">
-                <div class="card-modern module-card">
-                    <div class="module-icon-wrap">
-                        <svg width="24" height="24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                            <line x1="9" y1="3" x2="9" y2="21"></line>
-                        </svg>
-                    </div>
-                    <h3 class="module-title">Buildings</h3>
-                    <p class="module-subtitle">Manage dormitory buildings</p>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-6 col-lg-4">
-            <a href="{{ url_for('rooms') }}" class="module-link">
-                <div class="card-modern module-card">
-                    <div class="module-icon-wrap">
-                        <svg width="24" height="24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                            <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                        </svg>
-                    </div>
-                    <h3 class="module-title">Rooms</h3>
-                    <p class="module-subtitle">View and manage room units</p>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-6 col-lg-4">
-            <a href="{{ url_for('assignments') }}" class="module-link">
-                <div class="card-modern module-card">
-                    <div class="module-icon-wrap">
-                        <svg width="24" height="24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
-                            <line x1="16" y1="13" x2="8" y2="13"></line>
-                            <line x1="16" y1="17" x2="8" y2="17"></line>
-                        </svg>
-                    </div>
-                    <h3 class="module-title">Assignments</h3>
-                    <p class="module-subtitle">Track room assignments</p>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-6 col-lg-4">
-            <a href="{{ url_for('payments') }}" class="module-link">
-                <div class="card-modern module-card">
-                    <div class="module-icon-wrap">
-                        <svg width="24" height="24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                            <line x1="1" y1="10" x2="23" y2="10"></line>
-                        </svg>
-                    </div>
-                    <h3 class="module-title">Payments</h3>
-                    <p class="module-subtitle">Manage rent payments</p>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-6 col-lg-4">
-            <a href="{{ url_for('reports') }}" class="module-link">
-                <div class="card-modern module-card">
-                    <div class="module-icon-wrap">
-                        <svg width="24" height="24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="18" y1="20" x2="18" y2="10"></line>
-                            <line x1="12" y1="20" x2="12" y2="4"></line>
-                            <line x1="6" y1="20" x2="6" y2="14"></line>
-                        </svg>
-                    </div>
-                    <h3 class="module-title">Reports</h3>
-                    <p class="module-subtitle">Generate and view reports</p>
-                </div>
-            </a>
-        </div>
-    </div>
-    {% elif role == 'landlord' %}
-    <div class="row g-4">
-        <div class="col-md-6">
-            <a href="{{ url_for('buildings') }}" class="module-link">
-                <div class="card-modern module-card">
-                    <div class="module-icon-wrap">
-                        <svg width="24" height="24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                        </svg>
-                    </div>
-                    <h3 class="module-title">My Buildings</h3>
-                    <p class="module-subtitle">Manage your properties</p>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-6">
-            <a href="{{ url_for('rooms') }}" class="module-link">
-                <div class="card-modern module-card">
-                    <div class="module-icon-wrap">
-                        <svg width="24" height="24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="module-title">My Rooms</h3>
-                    <p class="module-subtitle">View room availability</p>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-6">
-            <a href="{{ url_for('assignments') }}" class="module-link">
-                <div class="card-modern module-card">
-                    <div class="module-icon-wrap">
-                        <svg width="24" height="24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
-                            <line x1="16" y1="13" x2="8" y2="13"></line>
-                            <line x1="16" y1="17" x2="8" y2="17"></line>
-                        </svg>
-                    </div>
-                    <h3 class="module-title">Tenant Assignments</h3>
-                    <p class="module-subtitle">View tenant contracts</p>
-                </div>
-            </a>
-        </div>
-
-        <div class="col-md-6">
-            <a href="{{ url_for('payments') }}" class="module-link">
-                <div class="card-modern module-card">
-                    <div class="module-icon-wrap">
-                        <svg width="24" height="24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                        </svg>
-                    </div>
-                    <h3 class="module-title">Payments</h3>
-                    <p class="module-subtitle">Track rental payments</p>
-                </div>
-            </a>
-        </div>
+    {% if role == 'student' %}
+    <div class="analytics-panel mb-4">
+        <h3 class="analytics-panel-title">Student Workspace</h3>
+        <p class="analytics-panel-subtitle">
+            Use the left navigation to open <strong>My Assignment</strong>, <strong>Payments</strong>, or <strong>Rooms</strong>.
+        </p>
     </div>
     {% endif %}
 </div>

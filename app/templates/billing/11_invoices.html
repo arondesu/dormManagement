@@ -12,8 +12,8 @@
         <a href="{{ url_for('add_invoice') }}" class="btn-primary-modern">Add Invoice</a>
     </div>
 
-    <form method="GET" action="{{ url_for('invoices') }}" class="card-modern card-pad-sm mb-4">
-        <div class="row g-3">
+    <form method="GET" action="{{ url_for('invoices') }}" class="toolbar-modern">
+        <div class="row g-3 align-items-end">
             <div class="col-md-8">
                 <input type="text" name="search" value="{{ search }}" class="form-control-modern" placeholder="Search invoice #, tenant, room">
             </div>
@@ -29,7 +29,10 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <button type="submit" class="btn-primary-modern">Filter</button>
+                <button type="submit" class="btn-primary-modern w-100">Filter</button>
+            </div>
+            <div class="col-md-12 toolbar-actions">
+                <a href="{{ url_for('invoices') }}" class="btn-secondary-modern btn-compact">Reset</a>
             </div>
         </div>
     </form>

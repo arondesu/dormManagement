@@ -9,71 +9,83 @@
     <link href="{{ url_for('static', filename='css/pages.css') }}" rel="stylesheet">
     {% block extra_css %}{% endblock %}
 </head>
-<body>
-    <!-- Navigation -->
-    <nav class="navbar-modern">
-        <div class="container-fluid px-4">
-            <div class="d-flex justify-content-between align-items-center w-100">
-                <a href="/" class="navbar-brand-modern">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                        <polyline points="9 22 9 12 15 12 15 22"/>
-                    </svg>
-                    Dormitory System
+<body class="app-shell">
+    {% if session.get('user_id') %}
+    <div class="shell-layout" id="shellLayout">
+        <aside class="sidebar-modern" id="sidebarModern">
+            <div class="sidebar-header">
+                <a href="{{ url_for('home') }}" class="sidebar-brand">
+                    <span class="brand-dot"></span>
+                    <span>Accommo</span>
                 </a>
-                
-                <div class="d-flex gap-2 align-items-center">
-                    {% if session.get('user_id') %}
-                        {% if session.get('role') == 'admin' %}
-                            <a href="{{ url_for('users') }}" class="nav-link-modern">Users</a>
-                            <a href="{{ url_for('tenants') }}" class="nav-link-modern">Tenants</a>
-                            <a href="{{ url_for('buildings') }}" class="nav-link-modern">Buildings</a>
-                            <a href="{{ url_for('rooms') }}" class="nav-link-modern">Rooms</a>
-                            <a href="{{ url_for('beds') }}" class="nav-link-modern">Beds</a>
-                            <a href="{{ url_for('assignments') }}" class="nav-link-modern">Assignments</a>
-                            <a href="{{ url_for('invoices') }}" class="nav-link-modern">Invoices</a>
-                            <a href="{{ url_for('payments') }}" class="nav-link-modern">Payments</a>
-                            <a href="{{ url_for('maintenance') }}" class="nav-link-modern">Maintenance</a>
-                            <a href="{{ url_for('reports') }}" class="nav-link-modern">Reports</a>
-                        {% elif session.get('role') == 'landlord' %}
-                            <a href="{{ url_for('tenants') }}" class="nav-link-modern">Tenants</a>
-                            <a href="{{ url_for('buildings') }}" class="nav-link-modern">Buildings</a>
-                            <a href="{{ url_for('rooms') }}" class="nav-link-modern">Rooms</a>
-                            <a href="{{ url_for('beds') }}" class="nav-link-modern">Beds</a>
-                            <a href="{{ url_for('assignments') }}" class="nav-link-modern">Assignments</a>
-                            <a href="{{ url_for('invoices') }}" class="nav-link-modern">Invoices</a>
-                            <a href="{{ url_for('payments') }}" class="nav-link-modern">Payments</a>
-                            <a href="{{ url_for('maintenance') }}" class="nav-link-modern">Maintenance</a>
-                        {% else %}
-                            <a href="{{ url_for('rooms') }}" class="nav-link-modern">Rooms</a>
-                            <a href="{{ url_for('assignments') }}" class="nav-link-modern">My Assignment</a>
-                            <a href="{{ url_for('payments') }}" class="nav-link-modern">Payments</a>
-                        {% endif %}
-                        <span class="nav-link-modern">{{ session.get('username') }}</span>
-                        <a href="{{ url_for('logout') }}" class="btn-secondary-modern nav-auth-btn">Logout</a>
-                    {% else %}
-                        <a href="{{ url_for('login') }}" class="btn-primary-modern nav-auth-btn">Login</a>
-                    {% endif %}
+                <p class="sidebar-caption">Dormitory Management</p>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="{{ url_for('home') }}" class="sidebar-link {% if request.endpoint == 'home' %}active{% endif %}">Dashboard</a>
+
+                {% if session.get('role') == 'admin' %}
+                    <a href="{{ url_for('users') }}" class="sidebar-link {% if request.endpoint in ['users', 'admin_add_user', 'edit_user'] %}active{% endif %}">Users</a>
+                    <a href="{{ url_for('tenants') }}" class="sidebar-link {% if request.endpoint in ['tenants', 'add_tenant', 'edit_tenant'] %}active{% endif %}">Tenants</a>
+                    <a href="{{ url_for('buildings') }}" class="sidebar-link {% if request.endpoint in ['buildings', 'add_building', 'edit_building'] %}active{% endif %}">Buildings</a>
+                    <a href="{{ url_for('rooms') }}" class="sidebar-link {% if request.endpoint in ['rooms', 'add_room', 'edit_room', 'room_type'] %}active{% endif %}">Rooms</a>
+                    <a href="{{ url_for('beds') }}" class="sidebar-link {% if request.endpoint in ['beds', 'add_bed', 'edit_bed'] %}active{% endif %}">Beds</a>
+                    <a href="{{ url_for('assignments') }}" class="sidebar-link {% if request.endpoint in ['assignments', 'assign_room', 'edit_assignment'] %}active{% endif %}">Assignments</a>
+                    <a href="{{ url_for('invoices') }}" class="sidebar-link {% if request.endpoint in ['invoices', 'add_invoice', 'edit_invoice'] %}active{% endif %}">Invoices</a>
+                    <a href="{{ url_for('payments') }}" class="sidebar-link {% if request.endpoint in ['payments', 'record_payment', 'edit_payment', 'view_payment', 'payment'] %}active{% endif %}">Payments</a>
+                    <a href="{{ url_for('maintenance') }}" class="sidebar-link {% if request.endpoint in ['maintenance', 'add_maintenance', 'edit_maintenance'] %}active{% endif %}">Maintenance</a>
+                    <a href="{{ url_for('reports') }}" class="sidebar-link {% if request.endpoint in ['reports', 'export_reports_csv'] %}active{% endif %}">Reports</a>
+                {% elif session.get('role') == 'landlord' %}
+                    <a href="{{ url_for('tenants') }}" class="sidebar-link {% if request.endpoint in ['tenants', 'add_tenant', 'edit_tenant'] %}active{% endif %}">Tenants</a>
+                    <a href="{{ url_for('buildings') }}" class="sidebar-link {% if request.endpoint in ['buildings', 'add_building', 'edit_building'] %}active{% endif %}">Buildings</a>
+                    <a href="{{ url_for('rooms') }}" class="sidebar-link {% if request.endpoint in ['rooms', 'add_room', 'edit_room', 'room_type'] %}active{% endif %}">Rooms</a>
+                    <a href="{{ url_for('beds') }}" class="sidebar-link {% if request.endpoint in ['beds', 'add_bed', 'edit_bed'] %}active{% endif %}">Beds</a>
+                    <a href="{{ url_for('assignments') }}" class="sidebar-link {% if request.endpoint in ['assignments', 'assign_room', 'edit_assignment'] %}active{% endif %}">Assignments</a>
+                    <a href="{{ url_for('invoices') }}" class="sidebar-link {% if request.endpoint in ['invoices', 'add_invoice', 'edit_invoice'] %}active{% endif %}">Invoices</a>
+                    <a href="{{ url_for('payments') }}" class="sidebar-link {% if request.endpoint in ['payments', 'record_payment', 'edit_payment', 'view_payment', 'payment'] %}active{% endif %}">Payments</a>
+                    <a href="{{ url_for('maintenance') }}" class="sidebar-link {% if request.endpoint in ['maintenance', 'add_maintenance', 'edit_maintenance'] %}active{% endif %}">Maintenance</a>
+                {% else %}
+                    <a href="{{ url_for('rooms') }}" class="sidebar-link {% if request.endpoint in ['rooms', 'room_type'] %}active{% endif %}">Rooms</a>
+                    <a href="{{ url_for('assignments') }}" class="sidebar-link {% if request.endpoint in ['assignments'] %}active{% endif %}">My Assignment</a>
+                    <a href="{{ url_for('payments') }}" class="sidebar-link {% if request.endpoint in ['payments', 'view_payment'] %}active{% endif %}">Payments</a>
+                {% endif %}
+            </nav>
+        </aside>
+
+        <div class="main-panel">
+            <header class="topbar-modern">
+                <button class="sidebar-toggle-btn" type="button" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+                <div class="topbar-title-wrap">
+                    <h2 class="topbar-title">{{ self.title() }}</h2>
+                    <p class="topbar-subtitle">Control center for rooms, billing, and operations</p>
                 </div>
-            </div>
+                <div class="topbar-actions">
+                    <span class="user-chip">{{ session.get('username') }} • {{ session.get('role')|title }}</span>
+                    <a href="{{ url_for('logout') }}" class="btn-secondary-modern nav-auth-btn">Logout</a>
+                </div>
+            </header>
+
+            <main class="content-modern">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="container-modern flash-container">
+                            {% for category, message in messages %}
+                                <div class="alert-modern alert-{{ 'success' if category == 'success' else 'danger' if category == 'danger' else 'info' }}">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+    {% endif %}
+
+                {% block content %}{% endblock %}
+
+    {% if session.get('user_id') %}
+            </main>
         </div>
-    </nav>
-
-    <!-- Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            <div class="container-modern flash-container">
-                {% for category, message in messages %}
-                    <div class="alert-modern alert-{{ 'success' if category == 'success' else 'danger' if category == 'danger' else 'info' }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
-
-    <!-- Main Content -->
-    {% block content %}{% endblock %}
+    </div>
+    {% endif %}
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>

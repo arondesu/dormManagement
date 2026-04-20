@@ -3,6 +3,49 @@
 .card-pad-lg { padding: 1.5rem; }
 .card-pad-xl { padding: 2rem; }
 
+.dashboard-kpi-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+}
+
+.kpi-card {
+    background: #ffffff;
+    border: 1px solid #dbe7f5;
+    border-radius: 0.85rem;
+    padding: 1.1rem;
+    box-shadow: 0 10px 22px rgba(15, 23, 42, 0.05);
+}
+
+.kpi-label {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    color: #64748b;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.45rem;
+}
+
+.kpi-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.toolbar-modern {
+    background: #ffffff;
+    border: 1px solid #dbe7f5;
+    border-radius: 0.85rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.toolbar-actions {
+    display: flex;
+    gap: 0.55rem;
+    justify-content: flex-end;
+    align-items: center;
+}
+
 .search-icon {
     position: absolute;
     left: 12px;
@@ -76,12 +119,13 @@
 .hero-banner {
     background: linear-gradient(125deg, #0f172a 0%, #1e3a8a 55%, #1d4ed8 100%);
     border-radius: 1rem;
-    padding: 4rem 2rem;
+    padding: 2.7rem 2rem;
     box-shadow: 0 20px 38px rgba(15, 23, 42, 0.22);
+    text-align: center;
 }
 
 .hero-title {
-    font-size: 2.5rem;
+    font-size: 2.1rem;
     font-weight: 700;
     color: #ffffff;
     margin-bottom: 1rem;
@@ -102,7 +146,7 @@
 }
 
 .dashboard-stat-value {
-    font-size: 2rem;
+    font-size: 1.7rem;
     font-weight: 700;
 }
 
@@ -118,7 +162,7 @@
 }
 
 .module-card {
-    padding: 2rem;
+    padding: 1.5rem;
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     border: 1px solid #d8e4f5;
 }
@@ -141,14 +185,34 @@
 }
 
 .module-title {
-    font-size: 1.25rem;
+    font-size: 1.08rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
 }
 
 .module-subtitle {
     color: var(--text-secondary);
-    font-size: 0.875rem;
+    font-size: 0.84rem;
+}
+
+.analytics-panel {
+    border: 1px dashed #bfdbfe;
+    background: linear-gradient(180deg, #f8fbff 0%, #eff6ff 100%);
+    border-radius: 0.85rem;
+    padding: 1.15rem;
+}
+
+.analytics-panel-title {
+    margin: 0;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #1e3a8a;
+}
+
+.analytics-panel-subtitle {
+    margin: 0.35rem 0 0;
+    font-size: 0.82rem;
+    color: #334155;
 }
 
 .section-title {
