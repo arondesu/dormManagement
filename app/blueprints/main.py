@@ -31,7 +31,6 @@ def home():
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    overdue_amount = 0.0
     collections_this_month = 0.0
     occupancy_pct = 0.0
 
@@ -47,15 +46,6 @@ def home():
 
         cursor.execute("SELECT COUNT(*) AS pending FROM room_assignments WHERE status='pending'")
         pending = cursor.fetchone()["pending"]
-
-        cursor.execute(
-            """
-            SELECT COALESCE(SUM(total_amount - amount_paid), 0) AS overdue_amount
-            FROM invoices
-            WHERE status = 'overdue'
-            """
-        )
-        overdue_amount = float(cursor.fetchone()["overdue_amount"] or 0)
 
         cursor.execute(
             """
@@ -101,19 +91,6 @@ def home():
 
         cursor.execute(
             """
-            SELECT COALESCE(SUM(i.total_amount - i.amount_paid), 0) AS overdue_amount
-            FROM invoices i
-            LEFT JOIN room_assignments ra ON i.assignment_id = ra.assignment_id
-            LEFT JOIN rooms r ON ra.room_id = r.room_id
-            LEFT JOIN buildings b ON r.building_id = b.building_id
-            WHERE i.status = 'overdue' AND b.owner_id = ?
-            """,
-            (user_id,),
-        )
-        overdue_amount = float(cursor.fetchone()["overdue_amount"] or 0)
-
-        cursor.execute(
-            """
             SELECT COALESCE(SUM(p.amount), 0) AS collections_this_month
             FROM payments p
                         LEFT JOIN room_assignments ra ON p.assignment_id = ra.assignment_id
@@ -141,7 +118,6 @@ def home():
         occupied=occupied,
         available=available,
         pending=pending,
-        overdue_amount=overdue_amount,
         collections_this_month=collections_this_month,
         occupancy_pct=occupancy_pct,
     )

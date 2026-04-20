@@ -1,11 +1,11 @@
 {% extends '_base.html' %}
 
-{% block title %}Add Maintenance Ticket{% endblock %}
+{% block title %}Add Maintenance Request{% endblock %}
 
 {% block content %}
 <div class="container-modern">
     <div class="page-header">
-        <h1 class="page-title">Add Maintenance Ticket</h1>
+        <h1 class="page-title">Add Maintenance Request</h1>
         <p class="page-subtitle">Create a new maintenance issue for tracking</p>
     </div>
 
@@ -15,15 +15,6 @@
                 <div class="col-md-8">
                     <label class="form-label-modern">Title</label>
                     <input type="text" name="title" class="form-control-modern" required>
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label-modern">Priority</label>
-                    <select name="priority" class="form-control-modern">
-                        <option value="low">Low</option>
-                        <option value="medium" selected>Medium</option>
-                        <option value="high">High</option>
-                        <option value="urgent">Urgent</option>
-                    </select>
                 </div>
                 <div class="col-md-4">
                     <label class="form-label-modern">Status</label>
@@ -44,19 +35,19 @@
                     </select>
                 </div>
                 <div class="col-md-4">
-                    <label class="form-label-modern">Tenant</label>
-                    <select name="tenant_id" class="form-control-modern">
-                        <option value="">Select tenant</option>
-                        {% for tenant in tenants %}
-                            <option value="{{ tenant.tenant_id }}">{{ tenant.first_name }} {{ tenant.last_name }}</option>
+                    <label class="form-label-modern">Requested By</label>
+                    <select name="user_id" class="form-control-modern">
+                        <option value="">Select requester</option>
+                        {% for requester in requesters %}
+                            <option value="{{ requester.user_id }}">{{ requester.first_name }} {{ requester.last_name }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div class="col-md-6">
-                    <label class="form-label-modern">Assign To</label>
-                    <select name="assigned_to" class="form-control-modern">
+                    <label class="form-label-modern">Handled By</label>
+                    <select name="handled_by" class="form-control-modern">
                         <option value="">Unassigned</option>
-                        {% for member in staff %}
+                        {% for member in handlers %}
                             <option value="{{ member.user_id }}">{{ member.first_name }} {{ member.last_name }}</option>
                         {% endfor %}
                     </select>
@@ -65,14 +56,10 @@
                     <label class="form-label-modern">Description</label>
                     <textarea name="description" class="form-control-modern" rows="3"></textarea>
                 </div>
-                <div class="col-md-12">
-                    <label class="form-label-modern">Notes</label>
-                    <textarea name="notes" class="form-control-modern" rows="2"></textarea>
-                </div>
             </div>
 
             <div class="d-flex gap-2 mt-4">
-                <button type="submit" class="btn-primary-modern">Save Ticket</button>
+                <button type="submit" class="btn-primary-modern">Save Request</button>
                 <a href="{{ url_for('maintenance') }}" class="btn-secondary-modern">Cancel</a>
             </div>
         </form>

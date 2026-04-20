@@ -186,7 +186,6 @@
                         {% if session.role in ['admin', 'landlord'] %}
                         <th>Period</th>
                         <th>Assignment</th>
-                        <th>Applied to Invoices</th>
                         {% endif %}
                         <th>Actions</th>
                     </tr>
@@ -226,7 +225,6 @@
                                 <span class="text-muted-light">N/A</span>
                                 {% endif %}
                             </td>
-                            <td class="fw-semibold text-primary">₱{{ "{:,.2f}".format(payment.allocated_amount or 0) }}</td>
                             {% endif %}
                             <td>
                                 <div class="d-flex gap-1">
@@ -258,7 +256,7 @@
                         {% endfor %}
                     {% else %}
                         <tr>
-                            <td colspan="9" class="text-center py-5 text-secondary">
+                            <td colspan="8" class="text-center py-5 text-secondary">
                                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="empty-icon empty-icon-50">
                                     <rect x="2" y="5" width="20" height="14" rx="2"/>
                                     <line x1="2" y1="10" x2="22" y2="10"/>
@@ -307,13 +305,6 @@
                                 <option value="">Select assignment first</option>
                             </select>
                             <small class="text-muted">Optional - links payment to a room assignment</small>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label-modern">Invoice</label>
-                            <select name="invoice_id" id="invoice_select" class="form-control-modern">
-                                <option value="">Auto-allocate by due date</option>
-                            </select>
-                            <small class="text-muted">Optional - prioritize one invoice before others</small>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label-modern">Amount (₱) *</label>

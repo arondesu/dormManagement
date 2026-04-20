@@ -36,8 +36,8 @@
             <div class="kpi-value text-info">{{ occupancy_pct }}%</div>
         </div>
         <div class="kpi-card">
-            <div class="kpi-label">Overdue Balance</div>
-            <div class="kpi-value text-danger">₱{{ "{:,.2f}".format(overdue_amount or 0) }}</div>
+            <div class="kpi-label">Pending Assignments</div>
+            <div class="kpi-value text-danger">{{ pending }}</div>
         </div>
         <div class="kpi-card">
             <div class="kpi-label">Collections (This Month)</div>

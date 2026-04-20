@@ -26,22 +26,26 @@
 
                 {% if session.get('role') == 'admin' %}
                     <a href="{{ url_for('users') }}" class="sidebar-link {% if request.endpoint in ['users', 'admin_add_user', 'edit_user'] %}active{% endif %}">Users</a>
+                    <a href="{{ url_for('roles') }}" class="sidebar-link {% if request.endpoint in ['roles'] %}active{% endif %}">Roles</a>
                     <a href="{{ url_for('buildings') }}" class="sidebar-link {% if request.endpoint in ['buildings', 'add_building', 'edit_building'] %}active{% endif %}">Buildings</a>
                     <a href="{{ url_for('rooms') }}" class="sidebar-link {% if request.endpoint in ['rooms', 'add_room', 'edit_room', 'room_type'] %}active{% endif %}">Rooms</a>
                     <a href="{{ url_for('assignments') }}" class="sidebar-link {% if request.endpoint in ['assignments', 'assign_room', 'edit_assignment'] %}active{% endif %}">Assignments</a>
                     <a href="{{ url_for('payments') }}" class="sidebar-link {% if request.endpoint in ['payments', 'record_payment', 'edit_payment', 'view_payment', 'payment'] %}active{% endif %}">Payments</a>
-                    <a href="{{ url_for('maintenance') }}" class="sidebar-link {% if request.endpoint in ['maintenance', 'add_maintenance', 'edit_maintenance'] %}active{% endif %}">Maintenance</a>
+                    <a href="{{ url_for('maintenance') }}" class="sidebar-link {% if request.endpoint in ['maintenance', 'add_maintenance', 'edit_maintenance'] %}active{% endif %}">Maintenance Requests</a>
+                    <a href="{{ url_for('announcements') }}" class="sidebar-link {% if request.endpoint in ['announcements'] %}active{% endif %}">Announcements</a>
                     <a href="{{ url_for('reports') }}" class="sidebar-link {% if request.endpoint in ['reports', 'export_reports_csv'] %}active{% endif %}">Reports</a>
                 {% elif session.get('role') == 'landlord' %}
                     <a href="{{ url_for('buildings') }}" class="sidebar-link {% if request.endpoint in ['buildings', 'add_building', 'edit_building'] %}active{% endif %}">Buildings</a>
                     <a href="{{ url_for('rooms') }}" class="sidebar-link {% if request.endpoint in ['rooms', 'add_room', 'edit_room', 'room_type'] %}active{% endif %}">Rooms</a>
                     <a href="{{ url_for('assignments') }}" class="sidebar-link {% if request.endpoint in ['assignments', 'assign_room', 'edit_assignment'] %}active{% endif %}">Assignments</a>
                     <a href="{{ url_for('payments') }}" class="sidebar-link {% if request.endpoint in ['payments', 'record_payment', 'edit_payment', 'view_payment', 'payment'] %}active{% endif %}">Payments</a>
-                    <a href="{{ url_for('maintenance') }}" class="sidebar-link {% if request.endpoint in ['maintenance', 'add_maintenance', 'edit_maintenance'] %}active{% endif %}">Maintenance</a>
+                    <a href="{{ url_for('maintenance') }}" class="sidebar-link {% if request.endpoint in ['maintenance', 'add_maintenance', 'edit_maintenance'] %}active{% endif %}">Maintenance Requests</a>
+                    <a href="{{ url_for('announcements') }}" class="sidebar-link {% if request.endpoint in ['announcements'] %}active{% endif %}">Announcements</a>
                 {% else %}
                     <a href="{{ url_for('rooms') }}" class="sidebar-link {% if request.endpoint in ['rooms', 'room_type'] %}active{% endif %}">Rooms</a>
                     <a href="{{ url_for('assignments') }}" class="sidebar-link {% if request.endpoint in ['assignments'] %}active{% endif %}">My Assignment</a>
                     <a href="{{ url_for('payments') }}" class="sidebar-link {% if request.endpoint in ['payments', 'view_payment'] %}active{% endif %}">Payments</a>
+                    <a href="{{ url_for('announcements') }}" class="sidebar-link {% if request.endpoint in ['announcements'] %}active{% endif %}">Announcements</a>
                 {% endif %}
             </nav>
         </aside>
