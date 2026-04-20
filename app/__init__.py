@@ -52,7 +52,6 @@ LEGACY_ENDPOINT_ALIASES = {
     "export_reports": "reports.export_reports",
     "debug_session": "reports.debug_session",
     "announcements": "announcements.announcements",
-    "roles": "roles.roles",
 }
 
 

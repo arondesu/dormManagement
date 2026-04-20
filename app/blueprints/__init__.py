@@ -6,7 +6,6 @@ from .main import bp as main_bp
 from .maintenance import bp as maintenance_bp
 from .payments import bp as payments_bp
 from .reports import bp as reports_bp
-from .roles import bp as roles_bp
 from .rooms import bp as rooms_bp
 from .users import bp as users_bp
 
@@ -22,5 +21,4 @@ ALL_BLUEPRINTS = [
     payments_bp,
     reports_bp,
     announcements_bp,
-    roles_bp,
 ]

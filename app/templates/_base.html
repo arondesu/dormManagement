@@ -26,7 +26,6 @@
 
                 {% if session.get('role') == 'admin' %}
                     <a href="{{ url_for('users') }}" class="sidebar-link {% if request.endpoint in ['users', 'admin_add_user', 'edit_user'] %}active{% endif %}">Users</a>
-                    <a href="{{ url_for('roles') }}" class="sidebar-link {% if request.endpoint in ['roles'] %}active{% endif %}">Roles</a>
                     <a href="{{ url_for('buildings') }}" class="sidebar-link {% if request.endpoint in ['buildings', 'add_building', 'edit_building'] %}active{% endif %}">Buildings</a>
                     <a href="{{ url_for('rooms') }}" class="sidebar-link {% if request.endpoint in ['rooms', 'add_room', 'edit_room', 'room_type'] %}active{% endif %}">Rooms</a>
                     <a href="{{ url_for('assignments') }}" class="sidebar-link {% if request.endpoint in ['assignments', 'assign_room', 'edit_assignment'] %}active{% endif %}">Assignments</a>
