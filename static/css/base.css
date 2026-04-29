@@ -43,6 +43,19 @@ body {
     z-index: 30;
 }
 
+.brand-icon {
+    width: 24px;
+    height: 24px;
+    color: #fff;
+    margin-right: 8px;
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .navbar-brand-modern {
     font-weight: 700;
     font-size: 1.25rem;
@@ -155,7 +168,7 @@ body {
 }
 
 .btn-secondary-modern:hover {
-    background: #020617;
+    background: #a0a0a0;
     color: #ffffff;
 }
 
@@ -177,6 +190,7 @@ body {
 
 .btn-danger-modern:hover {
     background: #dc2626;
+    color: white;
     transform: translateY(-1px);
 }
 

@@ -16,9 +16,8 @@
             <div class="sidebar-header">
                 <a href="{{ url_for('home') }}" class="sidebar-brand">
                     <span class="brand-dot"></span>
-                    <span>Accommo</span>
+                    <span>DORMY</span>
                 </a>
-                <p class="sidebar-caption">Dormitory Management</p>
             </div>
 
             <nav class="sidebar-nav">
@@ -46,6 +45,7 @@
                     <a href="{{ url_for('payments') }}" class="sidebar-link {% if request.endpoint in ['payments', 'view_payment'] %}active{% endif %}">Payments</a>
                     <a href="{{ url_for('announcements') }}" class="sidebar-link {% if request.endpoint in ['announcements'] %}active{% endif %}">Announcements</a>
                 {% endif %}
+                <a href="{{ url_for('logout') }}" class="btn-danger-modern nav-auth-btn">Logout</a>
             </nav>
         </aside>
 
@@ -53,12 +53,24 @@
             <header class="topbar-modern">
                 <button class="sidebar-toggle-btn" type="button" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
                 <div class="topbar-title-wrap">
-                    <h2 class="topbar-title">{{ self.title() }}</h2>
-                    <p class="topbar-subtitle">Control center for rooms, billing, and operations</p>
+                    <h2 class="topbar-title">
+                        <!-- Dynamically display current page title based on route -->
+                        {% set endpoint = request.endpoint or '' %}
+                        {% if endpoint.endswith('home') %}Dashboard
+                        {% elif endpoint.endswith('users') or endpoint.endswith('admin_add_user') or endpoint.endswith('edit_user') %}Users
+                        {% elif endpoint.endswith('buildings') or endpoint.endswith('add_building') or endpoint.endswith('edit_building') %}Buildings
+                        {% elif endpoint.endswith('rooms') or endpoint.endswith('add_room') or endpoint.endswith('edit_room') or endpoint.endswith('room_types') %}Rooms
+                        {% elif endpoint.endswith('assignments') or endpoint.endswith('admin_assign_room') or endpoint.endswith('edit_assignment') %}Assignments
+                        {% elif endpoint.endswith('payments') or endpoint.endswith('record_payment') or endpoint.endswith('edit_payment') or endpoint.endswith('payment') %}Payments
+                        {% elif endpoint.endswith('maintenance') or endpoint.endswith('add_maintenance') or endpoint.endswith('edit_maintenance') or endpoint.endswith('maintenance_requests') %}Maintenance Requests
+                        {% elif endpoint.endswith('announcements') %}Announcements
+                        {% elif endpoint.endswith('reports') or endpoint.endswith('export_reports') or endpoint.endswith('export_payments') or endpoint.endswith('export_assignments') %}Reports
+                        {% else %}Dashboard
+                        {% endif %}
+                    </h2>
                 </div>
                 <div class="topbar-actions">
                     <span class="user-chip">{{ session.get('username') }} • {{ session.get('role')|title }}</span>
-                    <a href="{{ url_for('logout') }}" class="btn-secondary-modern nav-auth-btn">Logout</a>
                 </div>
             </header>
 

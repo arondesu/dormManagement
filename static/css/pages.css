@@ -117,7 +117,7 @@
 }
 
 .hero-banner {
-    background: linear-gradient(125deg, #0f172a 0%, #1e3a8a 55%, #1d4ed8 100%);
+    background: #13017c;
     border-radius: 1rem;
     padding: 2.7rem 2rem;
     box-shadow: 0 20px 38px rgba(15, 23, 42, 0.22);
