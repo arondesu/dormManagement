@@ -418,7 +418,6 @@ accommo/
 │   ├── 05_rooms.html          # Rooms list
 │   ├── 06_assignments.html    # Assignments list
 │   ├── 07_payment.html        # Payment form
-│   ├── 07_payments.html       # Payments list (duplicate - consolidate)
 │   └── 08_reports.html        # Reports list
 │
 ├── static/                     # Static assets (optional)
@@ -428,17 +427,6 @@ accommo/
 └── docs/                       # Documentation (optional)
     └── README.md              # This file
 ```
-
-### Files to Delete
-These files are now consolidated into this README:
-- `database/ERD.md` ✂️
-- `database/data_dictionary.md` ✂️
-- `SYSTEM_STRUCTURE.md` ✂️
-- `SETUP_SQLITE.md` ✂️
-- `QUICK_REFERENCE.md` (if exists) ✂️
-- `CHANGES.md` (if exists) ✂️
-
----
 
 ## 👥 User Roles
 
