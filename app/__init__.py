@@ -1,5 +1,7 @@
+import os
+
 from dotenv import load_dotenv
-from flask import Flask
+from flask import Flask, request
 
 from app.blueprints import ALL_BLUEPRINTS
 from app.config import Config
@@ -50,7 +52,6 @@ LEGACY_ENDPOINT_ALIASES = {
     "export_payments": "reports.export_payments",
     "export_assignments": "reports.export_assignments",
     "export_reports": "reports.export_reports",
-    "debug_session": "reports.debug_session",
     "announcements": "announcements.announcements",
 }
 
@@ -73,15 +74,21 @@ def _register_legacy_endpoint_aliases(app):
 
 def create_app():
     load_dotenv()
+    secret_key = os.getenv("FLASK_SECRET_KEY")
+    if not secret_key:
+        raise RuntimeError("FLASK_SECRET_KEY must be set before starting the application")
 
     app = Flask(__name__, static_folder="../static")
     app.config.from_object(Config)
+    app.config["SECRET_KEY"] = secret_key
 
     init_app_data()
 
     @app.after_request
     def add_header(response):
-        response.cache_control.max_age = 300
+        if request.endpoint != "static":
+            response.cache_control.private = True
+            response.cache_control.no_store = True
         return response
 
     for blueprint in ALL_BLUEPRINTS:

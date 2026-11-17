@@ -13,6 +13,7 @@ bp = Blueprint("reports", __name__)
 
 
 @bp.route("/reports")
+@role_required("admin")
 def reports():
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -118,7 +119,7 @@ def export_assignments():
         for row in rows:
             csv_writer.writerow(row)
         output = string_io.getvalue()
-        filename = f"payments_{datetime.utcnow().strftime('%Y%m%d_%H%M')}.csv"
+        filename = f"assignments_{datetime.utcnow().strftime('%Y%m%d_%H%M')}.csv"
         return Response(output, mimetype="text/csv", headers={"Content-Disposition": f"attachment;filename={filename}"})
     except Exception as error:
         flash(f"Error exporting assignments: {error}", "danger")
@@ -141,7 +142,7 @@ def export_reports():
         csv_writer.writerow(["report_id", "report_type", "report_title", "generated_on", "generated_by"])
         for row in rows:
             csv_writer.writerow(row)
-        filename = f"payments_{datetime.utcnow().strftime('%Y%m%d_%H%M')}.csv"
+        filename = f"reports_{datetime.utcnow().strftime('%Y%m%d_%H%M')}.csv"
         return Response(
             string_io.getvalue(),
             mimetype="text/csv",
@@ -154,12 +155,3 @@ def export_reports():
         cursor.close()
         conn.close()
 
-
-@bp.route("/debug_session")
-def debug_session():
-    return {
-        "user_id": session.get("user_id"),
-        "username": session.get("username"),
-        "role": session.get("role"),
-        "session_keys": list(session.keys()),
-    }

@@ -9,6 +9,7 @@ bp = Blueprint("buildings", __name__)
 
 
 @bp.route("/delete_building/<int:building_id>", methods=["POST"])
+@role_required("admin", "landlord")
 def delete_building(building_id):
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -19,6 +20,10 @@ def delete_building(building_id):
 
         if not building:
             flash("Building not found.", "danger")
+            return redirect(url_for("buildings"))
+
+        if session.get("role") == "landlord" and str(building["owner_id"]) != str(session.get("user_id")):
+            flash("Permission denied: you can only delete your own buildings.", "danger")
             return redirect(url_for("buildings"))
 
         cursor.execute("SELECT room_id FROM rooms WHERE building_id = ?", (building_id,))
@@ -157,11 +162,23 @@ def add_building():
 
 
 @bp.route("/edit_building/<int:building_id>", methods=["GET", "POST"])
+@role_required("admin", "landlord")
 def edit_building(building_id):
     conn = get_db_connection()
     cursor = conn.cursor()
     building = None
     try:
+        cursor.execute("SELECT * FROM buildings WHERE building_id=?", (building_id,))
+        building = cursor.fetchone()
+
+        if not building:
+            flash("Building not found.", "warning")
+            return redirect(url_for("buildings"))
+
+        if session.get("role") == "landlord" and str(building["owner_id"]) != str(session.get("user_id")):
+            flash("Permission denied: you can only edit your own buildings.", "danger")
+            return redirect(url_for("buildings"))
+
         if request.method == "POST":
             building_name = request.form.get("building_name")
             address = request.form.get("address")
@@ -169,10 +186,6 @@ def edit_building(building_id):
             owner_id = None
             if session.get("role") == "admin":
                 owner_id = request.form.get("owner_id") or None
-
-            if session.get("role") == "landlord" and building and building.get("owner_id") != session.get("user_id"):
-                flash("Permission denied: you can only edit your own buildings.", "danger")
-                return redirect(url_for("buildings"))
 
             if owner_id is not None:
                 cursor.execute(
@@ -194,13 +207,6 @@ def edit_building(building_id):
                 )
             conn.commit()
             flash("Building updated successfully!", "success")
-            return redirect(url_for("buildings"))
-
-        cursor.execute("SELECT * FROM buildings WHERE building_id=?", (building_id,))
-        building = cursor.fetchone()
-
-        if not building:
-            flash("Building not found.", "warning")
             return redirect(url_for("buildings"))
 
     except Exception as error:
